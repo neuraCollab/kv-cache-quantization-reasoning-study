@@ -25,3 +25,6 @@ models/
 # IDE
 .vscode/
 .idea/
+
+# Local agent worktrees
+.worktrees/
