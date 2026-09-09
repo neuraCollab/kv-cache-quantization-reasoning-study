@@ -2,7 +2,7 @@
 
 A standalone benchmark of off-the-shelf quantization schemes on
 `unsloth/llama-3-8b`, independent of the reasoning-trace divergence study.
-Where the main study ([`../kv-cache-reasoning-divergence-study/`](../kv-cache-reasoning-divergence-study/))
+Where the main study ([`../../kv-cache-reasoning-divergence-study/`](../../kv-cache-reasoning-divergence-study/))
 asks "how does KV quantization change *reasoning behavior*", this benchmark
 asks the more conventional question — VRAM, throughput, and output-quality
 tradeoffs across quantization schemes in general.

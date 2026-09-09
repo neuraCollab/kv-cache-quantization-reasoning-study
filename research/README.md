@@ -1,46 +1,77 @@
-# Research — KV-Cache Quantization Programme
+# KV Cache Quantization × Reasoning Trace Stability
 
-This directory holds the full research programme behind the reasoning-trace
-KV-cache quantization study whose production pipeline lives at the repo root
-(`src/kvtrace/`, `scripts/`, see the top-level [README.md](../README.md)).
-It was consolidated from a working "nir" (НИР — научно-исследовательская
-работа) folder that accumulated over the course of the project; personal and
-unrelated material (an unrelated ML model, personal photos/notes) was removed
-by the author before this pass, and this pass deduplicated redundant snapshots
-and gave the remainder a consistent structure.
+Исследовалось, как различные методы сжатия KV-кэша (FP8, HQQ INT4 и INT2)
+влияют на качество решения 80 математических задач (из AIME-24 и MATH-500).
+Сравнивались модели: DeepSeek-R1-Distill-Qwen (1.5B и 7B) и базовая Qwen3
+(1.7B). Базовым (эталонным) форматом был BF16.
 
-## Contents
+## Главные выводы
 
-| Directory | What it is | Status |
-|---|---|---|
-| [`kv-cache-reasoning-divergence-study/`](kv-cache-reasoning-divergence-study/) | **The main study.** Full results of the 3-model × 5-quant × 80-problem reasoning-trace divergence experiment described at the repo root: raw traces, FDP records, LLM-judge classifications, the compiled report, and a deeper mechanistic-analysis pass (attention shift, layer ablation, failure prediction). | Complete — this is the finished deliverable |
-| [`prior-prototype/`](prior-prototype/) | An earlier, simpler iteration of the pipeline (Day 1–6 plan, KIVI/KVQuant-oriented) that predates and was superseded by `src/kvtrace/` at the repo root. | Historical / superseded |
-| [`general-kv-cache-quantization-bench/`](general-kv-cache-quantization-bench/) | A separate, model-accuracy-agnostic benchmark of off-the-shelf quantization schemes (bitsandbytes INT8/NF4, double-quant) on Llama-3-8B: VRAM, throughput, perplexity, generation quality. Not about reasoning traces — a general quantization-methods survey done in parallel. | Standalone benchmark |
-| [`custom-quantizer-and-theory/`](custom-quantizer-and-theory/) | Theoretical and from-scratch implementation work: a literature review of SOTA KV-cache quantization (SmoothQuant → KIVI/KVQuant → QuaRot/SpinQuant → sub-2-bit 2025–26 schemes), a formal (numerically-validated) closed-form error-bound theory for KV quantization under long chain-of-thought, and from-scratch quantizer implementations (naive RTN, GPTQ, and a novel "WaterSIC" water-filling bit allocator). | Theory / prototypes |
-| [`literature-and-notes/`](literature-and-notes/) | Literature-review draft and working notes kept by the author. | Reference material |
-| [`misc/`](misc/) | Leftover files not clearly tied to one subproject (a slide deck, photos). | Unsorted |
+- **Архитектура важнее метода сжатия.** Устойчивость модели к квантованию
+  зависит в первую очередь от её архитектуры/семейства, а не от
+  агрессивности алгоритма квантования.
+- **DeepSeek не справляется с квантованием (проблема зацикливания).** Модели
+  DeepSeek (и 1.5B, и 7B) крайне чувствительны к сжатию кэша. Даже при
+  мягком квантовании (FP8) они полностью теряют точность. Основная причина
+  деградации — бесконечные циклы в рассуждениях. Из-за этого модель быстро
+  расходует весь лимит токенов (например, у DeepSeek 7B в FP8 длина
+  генерации вырастает в 2.6 раза, и 92% ответов обрываются по лимиту).
+- **Qwen3 демонстрирует высокую стабильность.** Qwen3 1.7B сохраняет логику
+  рассуждений почти на уровне эталонного BF16. Использование FP8
+  практически не влияет на длину генерации (рост всего на 2.6%–4.5%), и
+  модель не уходит в циклы.
+- **Экстремальное сжатие (HQQ INT4/INT2) работает плохо.** INT4 почти всегда
+  приводит к исчерпанию лимита токенов (даже если система логирует это как
+  нормальное завершение), а INT2 выдаёт слишком короткие и, как правило,
+  неверные ответы.
 
-## Reading order
+**Итог:** квантование KV-кэша критично ломает логику рассуждений у моделей
+семейства DeepSeek из-за потери контекста и последующего зацикливания, в то
+время как Qwen3 показывает отличную устойчивость к таким оптимизациям без
+существенной потери качества.
 
-If you only read one thing, read
-[`kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](kv-cache-reasoning-divergence-study/paper/supervisor_report.md) —
-it is the complete write-up (hypotheses, methodology, results, limitations,
-future work) for the study that this whole repository is built around. The
-other directories are supporting work: an earlier prototype, a parallel
-general-purpose quantization benchmark, and the theoretical background that
-motivated the KV-cache-quantization angle in the first place.
+## Эксперимент
 
-## Note on `quanrization/_redundant_safe_to_delete/`
+Всё, что относится непосредственно к этому эксперименту, живёт в
+[`kv-cache-reasoning-divergence-study/`](kv-cache-reasoning-divergence-study/):
 
-Sitting next to `research/` (one level up from here) is
-`quanrization/_redundant_safe_to_delete/` — confirmed byte-identical
-duplicate trace files, superseded intermediate snapshots (`kv-trace/`,
-`kv-trsh/`), a stripped `.git/` from the prototype, and `__pycache__` /
-`.ipynb_checkpoints` clutter. Everything of value was moved into `research/`
-before that directory was set aside; it was not deleted outright (destructive
-deletes are held back for you to confirm). Delete it once you've spot-checked
-that nothing is missing:
+- **[`paper/supervisor_report.md`](kv-cache-reasoning-divergence-study/paper/supervisor_report.md)** —
+  полный отчёт: гипотезы (H1–H3), методология, технические препятствия
+  (регрессия `transformers` 4.55, несовместимость SDPA, замедление на eager
+  attention), результаты, ограничения и future work. Скомпилированная версия —
+  [`paper/report.pdf`](kv-cache-reasoning-divergence-study/paper/report.pdf).
+- **`data/`** — сырые данные: 11 traces (модель × квант-метод), 10 файлов
+  First-Divergence-Point, 8 файлов judge-классификаций (категории A–F),
+  агрегированный отчёт фазы 4 (χ², Cramér's V).
+- **`figures/` / `tables/`** — графики (accuracy по моделям, позиция
+  расхождения, heatmap сигнатур сбоев) и таблицы (per-model χ², token
+  efficiency, распределение finish_reason, валидация судьи, quant_only-кейсы,
+  ограничения).
+- **`mechanistic-analysis/`** — более глубокий разбор механизма на уровне
+  внимания и KV-статистик (attention-shift KL, layer ablation, модель
+  предсказания сбоя). Код, который это сгенерировал, не сохранился — только
+  результаты.
+
+Воспроизводится через пайплайн в корне репозитория: `src/kvtrace/` +
+`scripts/01_generate_traces.py` … `04_analyze.py` (см. корневой
+[README.md](../README.md)).
+
+## Сопутствующие материалы
+
+Всё остальное, что не относится напрямую к сути эксперимента, но
+собиралось параллельно в ходе той же дипломной работы — литобзор,
+теоретическая работа над собственным квантайзером, общий (не про reasoning)
+бенчмарк квантизации, более ранний прототип пайплайна — вынесено в
+[`supporting-materials/`](supporting-materials/) как фоновый/подготовительный
+материал. Подробности — в его собственном
+[README](supporting-materials/README.md).
+
+## `quanrization/_redundant_safe_to_delete/`
+
+Рядом с `research/` (на уровень выше) остаётся
+`quanrization/_redundant_safe_to_delete/` — подтверждённо дублирующиеся
+данные, отложенные при чистке вместо немедленного удаления. Удалить можно:
 
 ```bash
-rm -rf quanrization/_redundant_safe_to_delete quanrization/nir
+rm -rf quanrization
 ```

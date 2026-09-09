@@ -10,4 +10,4 @@ Reference material kept alongside the code and results:
 
 These are drafts/personal notes rather than polished deliverables — the
 finished write-up is
-[`../kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](../kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
+[`../../kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](../../kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
