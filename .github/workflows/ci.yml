@@ -42,4 +42,4 @@ jobs:
       - name: Type check
         run: mypy src/kvtrace
       - name: Test (CPU, no live API)
-        run: pytest -m "not gpu and not live_api" --cov=src/kvtrace --cov-fail-under=85
+        run: pytest -m "not gpu and not live_api and not network" --cov=src/kvtrace --cov-fail-under=85

@@ -128,8 +128,34 @@ not part of the main 3-model study; they appear to be one-off probes).
 
 **The scripts that generated these artifacts were not found anywhere in the
 source material this was consolidated from** — only the output JSON/NPZ/PNG
-files survived. Treat this directory as results without accompanying code;
-reproducing it would mean re-deriving the methodology from the artifact
-filenames and JSON schemas (e.g. `attention_shift_summary_*.json`,
-`failure_prediction_*.json`, `layer_ablation_*.npz`) rather than running an
-existing script.
+files survived, and unlike Phase 5's tables there is no exact ground truth
+to verify a reconstruction against (these need real per-layer attention/KV/
+logit tensors from an actual forward pass — nothing here is derivable from
+already-generated text alone).
+
+**Partial reconstruction — infrastructure only.** `src/kvtrace/kv_capture/`
++ `scripts/06_kv_capture.py` (repo root) rebuild the *capture* layer this
+would need: a KV cache that fake-quantizes to FP8 (via torch's native
+`float8_e4m3fn`/`float8_e5m2`, since vLLM doesn't expose K/V for
+introspection) or wraps the real production HQQ `QuantizedCache`, teacher-
+forces an already-generated bf16 trace through the model under it, and
+computes attention-shift KL, per-layer KV stats, logit-KL trajectory, and
+outlier-channel scores — the building blocks behind
+`attention_shift_summary_*.json`, `kv_stats_per_layer_*.json`,
+`logits_kl_*.json`, and `outlier_channel_impact_*.json`.
+
+**Not covered**, and not attempted, because they'd need designing an entire
+methodology from filenames alone with nothing to check it against:
+`layer_ablation_*.npz`, `counterfactual_skipK_*.json`,
+`failure_prediction_*.json` / `cnn_buckets_test.json` / `fdp_predictor*.json`
+(a trained classifier — architecture unknown), `defense_validation_e2e.json`,
+`per_channel_defense_*.json`, and the `qwen3-1.7b_multiseed/` variance runs.
+
+The capture plumbing itself (hooking a real `Cache` subclass into a real
+forward pass, `output_attentions`/`output_hidden_states` capture, the
+baseline-vs-quant diff) is verified end-to-end against a tiny real
+Qwen2-architecture model on CPU — `pytest -m network`
+(`tests/test_kv_capture_generator.py`) — since the actual 1.5B-7B study
+models need a GPU this repo doesn't have. That test passing proves the
+wiring works, not that any specific number here would be reproduced; there's
+no way to check that without running it against the real models.

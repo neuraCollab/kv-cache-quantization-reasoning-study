@@ -1,4 +1,4 @@
-.PHONY: install install-dev test test-all lint type fmt clean
+.PHONY: install install-dev test test-all test-network lint type fmt clean
 
 install:
 	pip install -r requirements.txt
@@ -8,13 +8,16 @@ install-dev:
 	pip install -e .
 
 test:
-	pytest -m "not gpu and not live_api"
+	pytest -m "not gpu and not live_api and not network"
 
 test-gpu:
 	pytest -m gpu
 
 test-live:
 	pytest -m live_api -s -v
+
+test-network:
+	pytest -m network -s -v
 
 test-all:
 	pytest

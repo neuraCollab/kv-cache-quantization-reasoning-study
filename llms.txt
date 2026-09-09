@@ -14,14 +14,15 @@ work. Read `README.md` first, then `research/README.md`.
 
 ## Pipeline (do work here)
 
-- [README.md](README.md): install, env vars, how to run all 4 phases, testing markers, repo layout.
+- [README.md](README.md): install, env vars, how to run all 6 phases, testing markers, repo layout.
 - [src/kvtrace/config.py](src/kvtrace/config.py): pydantic schema for `config/*.yaml` — the single source of truth for models/quant-methods/pipeline params.
 - [src/kvtrace/generators/vllm_gen.py](src/kvtrace/generators/vllm_gen.py) / [hf_gen.py](src/kvtrace/generators/hf_gen.py): the two generation backends (vLLM for bf16/FP8; HF+HQQ for INT4/INT2). `hf_gen.py` has extensive inline comments documenting real GPU bugs it works around (device placement, eager attention, transformers version pin) — read them before touching this file.
 - [src/kvtrace/fdp/finder.py](src/kvtrace/fdp/finder.py): hybrid token-exact + semantic-resync First-Divergence-Point algorithm.
 - [src/kvtrace/judge/](src/kvtrace/judge/): taxonomy (6 failure categories A-F), prompt builder (Anthropic prompt caching), Claude client with SHA256 on-disk cache.
-- [src/kvtrace/analysis/](src/kvtrace/analysis/): chi-square/Cramér's V signature aggregation + markdown/JSON/plot report.
-- [scripts/01_generate_traces.py](scripts/01_generate_traces.py) … [04_analyze.py](scripts/04_analyze.py): the four CLI phases, driven by [scripts/run_all.sh](scripts/run_all.sh) (never hard-fails mid-run — logs and continues). [scripts/verify_run.py](scripts/verify_run.py): post-run artifact sanity check.
-- [tests/](tests/): one test file per module; CI runs `pytest -m "not gpu and not live_api" --cov=src/kvtrace --cov-fail-under=85`. `@pytest.mark.gpu` and `@pytest.mark.live_api` are skipped in CI — run manually before a real GPU/API session (see README "Testing").
+- [src/kvtrace/analysis/](src/kvtrace/analysis/): chi-square/Cramér's V signature aggregation + markdown/JSON/plot report (Phase 4), plus per-model tables/plots for the paper (Phase 5, see below).
+- [src/kvtrace/kv_capture/](src/kvtrace/kv_capture/): mechanistic capture (Phase 6) — `cache.py` (FP8 fake-quant / HQQ `Cache` subclasses that also record per-layer K/V), `metrics.py` (pure-tensor KL/outlier-channel math), `capture_generator.py` (ties model+cache+hooks together; GPU-only, omitted from coverage like `generators/{vllm,hf}_gen.py`).
+- [scripts/01_generate_traces.py](scripts/01_generate_traces.py) … [06_kv_capture.py](scripts/06_kv_capture.py): the six CLI phases, driven by [scripts/run_all.sh](scripts/run_all.sh) for 1-5 (never hard-fails mid-run — logs and continues; Phase 6 isn't wired into it, it's per-(model,quant) opt-in). [scripts/verify_run.py](scripts/verify_run.py): post-run artifact sanity check.
+- [tests/](tests/): one test file per module; CI runs `pytest -m "not gpu and not live_api and not network" --cov=src/kvtrace --cov-fail-under=85`. `@pytest.mark.gpu`/`live_api`/`network` are skipped in CI — run manually (see README "Testing"). `network` downloads a tiny real HF model to verify `kv_capture/` hook wiring without a GPU.
 - [docs/superpowers/plans/2026-04-25-kv-trace-study.md](docs/superpowers/plans/2026-04-25-kv-trace-study.md) / [docs/superpowers/specs/2026-04-25-kv-trace-study-design.md](docs/superpowers/specs/2026-04-25-kv-trace-study-design.md): original TDD implementation plan and design spec (9 phases, ~30 tasks — all implemented; checkboxes in the plan file are stale, don't trust them for status).
 
 ## Research results (read before re-deriving conclusions)
@@ -29,14 +30,15 @@ work. Read `README.md` first, then `research/README.md`.
 - [research/README.md](research/README.md): index of everything below.
 - [research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md): **the actual finished write-up** — hypotheses H1-H3, methodology, results, limitations, future work. Read this before assuming anything about the study needs to be re-run.
 - [research/kv-cache-reasoning-divergence-study/data/](research/kv-cache-reasoning-divergence-study/data/): the real traces/fdps/judgments from the completed run (11 traces, 10 FDP files, 8 judgment files — HQQ for Qwen3-1.7B and DeepSeek-7B was never collected, see limitations).
-- [research/kv-cache-reasoning-divergence-study/mechanistic-analysis/](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/): deeper per-model internals probes (attention-shift KL, layer ablation, failure prediction). **Generating code was not found anywhere** — only output artifacts survived; don't assume a runnable script exists for this.
+- [research/kv-cache-reasoning-divergence-study/mechanistic-analysis/](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/): deeper per-model internals probes (attention-shift KL, layer ablation, failure prediction). **Original generating code was not found anywhere** — only output artifacts survived. `src/kvtrace/kv_capture/` (Phase 6) reconstructs the capture *infrastructure* only (attention-shift KL, KV stats, logit-KL trajectory, outlier channels) — layer ablation, counterfactual skip-K, the CNN failure-predictor, defense validation, and multi-seed variance are not covered.
 - [research/prior-prototype/](research/prior-prototype/): superseded early iteration, historical only, not wired into the current pipeline.
 - [research/general-kv-cache-quantization-bench/](research/general-kv-cache-quantization-bench/), [research/custom-quantizer-and-theory/](research/custom-quantizer-and-theory/): adjacent/background work (general quantization benchmarking on Llama-3-8B; literature review + formal error-bound theory + from-scratch GPTQ/WaterSIC quantizer implementations). Independent of the main reasoning-trace study.
 
 ## Known gaps (don't assume these exist without checking)
 
 - **HQQ coverage is partial by design**: `qwen3-1.7b × {hqq_int4,hqq_int2}` and `deepseek-r1-distill-qwen-7b × {hqq_int4,hqq_int2}` were never generated (transformers ≥4.55 regression broke HQQ + eager-attention path was too slow within budget). This is documented, not a bug to fix silently.
-- **`research/kv-cache-reasoning-divergence-study/mechanistic-analysis/`** (attention-shift KL, layer ablation, failure-prediction models) has no recovered generating code — only output artifacts survived. Unlike `paper/`/`tables/` (see below), this one has not been reconstructed.
+- **Most of `mechanistic-analysis/` is still not reconstructed**: only the capture infrastructure (Phase 6, below) exists. `layer_ablation_*.npz`, `counterfactual_skipK_*.json`, `failure_prediction_*.json`/`cnn_buckets_test.json`/`fdp_predictor*.json` (a trained classifier — architecture unknown), `defense_validation_e2e.json`, and `qwen3-1.7b_multiseed/` variance have no code and none was attempted — there's no ground truth to verify a guess against.
+- **Phase 6 (`kv_capture/`) has never run against a real study model** — no GPU available in this dev environment. Only verified via a tiny (untrained) real Qwen2-architecture model on CPU (`pytest -m network`). Treat it as plumbing proven correct, not as validated against the actual 1.5B-7B models.
 - `quanrization/_redundant_safe_to_delete/` and now-empty `quanrization/nir/` at repo root hold confirmed-duplicate/emptied data set aside during a cleanup pass — safe to `rm -rf quanrization`, not yet done by the user as of this writing.
 
 ## Phase 5 (recovered)
@@ -56,18 +58,43 @@ corrupted files were found and removed:
 `qwen3-1.7b_fp8_e4m3.jsonl` mislabeled under the wrong filename (contradicted
 the documented "HQQ for Qwen3 never collected" claim above).
 
+## Phase 6 (kv_capture — infrastructure only, unverified against real models)
+
+`scripts/06_kv_capture.py` + `src/kvtrace/kv_capture/{cache,metrics,capture_generator}.py`
+are new, not a reconstruction of lost code (there's nothing to reconstruct
+against — see "known gaps"). Design: teacher-force an already-generated bf16
+trace (`token_ids` from `outputs/traces/{model}_bf16.jsonl`) through the real
+model twice — once under a passthrough `bf16` cache, once under a quantized
+one — and diff per-layer attention/logits/KV. `FakeQuantCache` fake-quantizes
+via torch's native `float8_e4m3fn`/`float8_e5m2` dtypes (a real
+quantize→dequantize round trip) because vLLM's actual FP8 kernels aren't
+introspectable; HQQ variants wrap the real production
+`transformers.cache_utils.QuantizedCache(backend="HQQ")`. Both must be real
+`Cache` subclasses, not a duck-typed wrapper — Transformers' modeling code
+does `isinstance(past_key_values, Cache)` and rejects anything else (this
+broke an earlier wrapper-based design; `CaptureMixin` + real subclassing
+fixed it — see `tests/test_kv_capture_cache.py::test_fake_quant_cache_is_a_real_transformers_cache`).
+
 ## Dev environment note
 
 This repo was developed on Windows; there is no usable Python on the base
 Windows install (only the WindowsApps store stub). A working Python 3.11
 lives in WSL Ubuntu's `~/miniforge3/envs/ds` conda env (has numpy/scipy/
-matplotlib/pyyaml/torch/transformers/datasets/pydantic/pytest already, CPU
-only, no GPU on this machine) — invoke it as
+matplotlib/pyyaml/torch/transformers/datasets/pydantic/pytest/ruff/mypy
+already, CPU only, no GPU on this machine; `torchvision` was uninstalled
+from it — an incompatible version broke `transformers.modeling_utils`'s
+import chain and isn't needed for text-only LLM work) — invoke it as
 `wsl -e bash -lc "cd /mnt/c/... && PYTHONPATH=src ~/miniforge3/envs/ds/bin/python -m pytest ..."`
-from PowerShell. GPU-only code paths (vLLM, real model generation) can be
-written and reasoned about but not executed here — CPU-only phases (4, 5,
-and most unit tests) can be fully run and verified; GPU phases (1, live
-judge calls in 3) should at most be import/syntax-checked, not run.
+from PowerShell (PowerShell's own quoting mangles nested `"`/`'` in `wsl -e
+bash -lc "..."` — write a scratch `.py` file and pass its `/mnt/c/...` path
+instead of inlining `-c "..."` code). GPU-only code paths (vLLM, real model
+generation) can be written and reasoned about but not executed here —
+CPU-only phases (4, 5, and most unit tests) can be fully run and verified;
+GPU phases (1, live judge calls in 3, Phase 6 against the real study models)
+should at most be import/syntax-checked, not run. `pytest -m network` is the
+exception — it downloads a tiny real HF model (`yujiepan/qwen2-tiny-random`,
+same Qwen2 architecture as DeepSeek-R1-Distill) to genuinely exercise the
+Phase 6 hook plumbing on CPU.
 
 ## Conventions
 

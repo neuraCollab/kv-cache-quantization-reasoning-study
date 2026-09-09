@@ -35,6 +35,21 @@ Five idempotent phases:
    [`research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
    Verified to reproduce that report's numbers exactly from the checked-in
    Phase 1-3 data (see `tests/test_paper_analysis.py`).
+6. **KV CAPTURE** (mechanistic, GPU-required) — `src/kvtrace/kv_capture/` +
+   `scripts/06_kv_capture.py` teacher-force an already-generated bf16 trace
+   through the real model under a quantized KV cache (FP8 fake-quantized via
+   torch's native `float8_e4m3fn`/`float8_e5m2` dtypes, since vLLM doesn't
+   expose per-layer K/V for introspection; HQQ via the real production
+   `QuantizedCache`), capturing per-layer attention-shift KL, KV statistics,
+   logit-KL trajectory, and outlier-channel scores. Reconstructs the
+   *infrastructure* behind
+   [`research/kv-cache-reasoning-divergence-study/mechanistic-analysis/`](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/)
+   (whose original code wasn't recovered) — not the full set of analyses
+   there (layer ablation, counterfactual skip-K, the CNN failure-predictor,
+   and multi-seed variance runs aren't covered). The hook/capture plumbing
+   is verified end-to-end against a tiny real model on CPU
+   (`pytest -m network`); it has not been run against the actual study
+   models, which need a GPU this repo doesn't have.
 
 Each phase is resumable from HuggingFace Hub snapshots, so a Vast.ai
 instance death in the middle of the run is cheap to recover from.
@@ -135,6 +150,9 @@ python scripts/04_analyze.py
 
 # Phase 5 — CPU only, no GPU/network; post-hoc tables + plots for the paper
 python scripts/05_paper_analysis.py
+
+# Phase 6 — GPU required; mechanistic KV-capture vs. the bf16 baseline
+python scripts/06_kv_capture.py --model deepseek-r1-distill-qwen-1.5b --quant fp8_e4m3
 ```
 
 ## Testing
@@ -148,15 +166,19 @@ make test-gpu
 
 # Live-API calibration (run before Phase 3)
 make test-live
+
+# Downloads a tiny real HF model to verify the kv_capture hook wiring end-to-end
+make test-network
 ```
 
-Three pytest markers:
+Four pytest markers:
 
 | Marker | When to run |
 |---|---|
 | (none) | always; CI default |
 | `@pytest.mark.gpu` | before renting GPU time |
 | `@pytest.mark.live_api` | before each Phase 3 run (catches Anthropic drift) |
+| `@pytest.mark.network` | verifying `kv_capture/` against a real (tiny) model without a GPU |
 
 ## Repository layout
 
@@ -168,9 +190,10 @@ kv-trace-study/
 │   ├── fdp/                  # hybrid token + semantic re-sync finder
 │   ├── judge/                # taxonomy, prompt, Claude client, golden set
 │   ├── hf_hub/               # idempotent upload / download
-│   └── analysis/             # signatures + markdown report
-├── scripts/                  # 01…04 phase CLIs + run_all.sh
-├── tests/                    # CPU, GPU, and live-API suites
+│   ├── analysis/             # signatures + markdown report + paper tables/plots
+│   └── kv_capture/           # mechanistic capture: fake-quant cache, KL/outlier metrics
+├── scripts/                  # 01…06 phase CLIs + run_all.sh
+├── tests/                    # CPU, GPU, live-API, and network suites
 └── outputs/                  # runtime artifacts (gitignored)
 ```
 
