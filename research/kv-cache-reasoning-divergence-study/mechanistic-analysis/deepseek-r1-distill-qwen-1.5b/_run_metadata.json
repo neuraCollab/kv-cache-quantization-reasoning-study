@@ -1,0 +1,16 @@
+{
+  "model": "deepseek-r1-distill-qwen-1.5b",
+  "model_revision_hash": "ad9f0ae0864d7fbcd1cd905e3c6c5b069cc8b562",
+  "git_commit": "e660bda34f2f91f58e7918415b81e27916918a58",
+  "quants": [
+    "fp8_e4m3"
+  ],
+  "modes": [
+    "tf"
+  ],
+  "window_pre": 150,
+  "window_post": 100,
+  "pytorch_version": "2.12.0+cpu",
+  "transformers_version": "4.51.3",
+  "run_timestamp": "2026-05-30T15:15:51.995592Z"
+}

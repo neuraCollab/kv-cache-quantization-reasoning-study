@@ -176,8 +176,20 @@ kv-trace-study/
 - Each JSONL row is self-describing — model, config, seed, timestamp,
   prompt version.
 
+## Results
+
+The completed study — the actual traces, FDP records, judge classifications,
+compiled report, and a deeper mechanistic-analysis pass (attention shift,
+layer ablation, failure prediction) — lives in
+[`research/kv-cache-reasoning-divergence-study/`](research/kv-cache-reasoning-divergence-study/).
+Start with its
+[`paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md)
+for the full write-up. `research/` also holds an earlier prototype, a general
+(non-reasoning) quantization benchmark, and the theoretical background work —
+see [`research/README.md`](research/README.md) for the full index.
+
 ## Citation
 
-The paper is not in this repository. The dataset and code here are the
-*reproducibility appendix*: cite them via the HuggingFace dataset id and
-the GitHub commit hash.
+The compiled report (`research/kv-cache-reasoning-divergence-study/paper/report.pdf`)
+and dataset are the citable artifacts: cite via the HuggingFace dataset id
+and the GitHub commit hash.

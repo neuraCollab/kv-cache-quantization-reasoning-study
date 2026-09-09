@@ -1,0 +1,43 @@
+
+data/
+*.jsonl
+*.json
+
+# Модели и кэш HuggingFace
+*.safetensors
+*.bin
+*.pt
+*.pth
+~/.cache/
+.cache/
+
+# KIVI и KVQuant репозитории
+KIVI/
+KVQuant/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Окружение
+.env
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Логи
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

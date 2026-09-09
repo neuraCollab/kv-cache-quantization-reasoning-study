@@ -1,0 +1,26 @@
+{
+    "FP16": {
+        "weights_mem_mb": 8906.3,
+        "speed_tps": 1.8,
+        "perplexity": 8.3512,
+        "kv_512_mb": 190.0,
+        "kv_2048_mb": 758.02,
+        "kv_4096_mb": 1514.03
+    },
+    "INT8 (BitsAndBytes)": {
+        "weights_mem_mb": 8665.76,
+        "speed_tps": 0.61,
+        "perplexity": 8.3517,
+        "kv_512_mb": 194.32,
+        "kv_2048_mb": 688.26,
+        "kv_4096_mb": 1258.03
+    },
+    "NF4 (ZeroQuant Style)": {
+        "weights_mem_mb": 5446.7,
+        "speed_tps": 1.16,
+        "perplexity": 9.0507,
+        "kv_512_mb": 210.5,
+        "kv_2048_mb": 672.14,
+        "kv_4096_mb": 1258.03
+    }
+}

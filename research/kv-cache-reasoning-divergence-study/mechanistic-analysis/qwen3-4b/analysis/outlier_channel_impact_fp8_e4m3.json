@@ -1,0 +1,340 @@
+{
+  "quant": "fp8_e4m3",
+  "mode": "tf_prompt",
+  "n_problems": 10,
+  "n_layers": 36,
+  "total_channels_per_layer": 1024,
+  "lorenz_per_layer": {
+    "0": {
+      "total": 16908.66015625,
+      "n_channels_for_50pct": 4,
+      "n_channels_for_80pct": 6,
+      "n_channels_for_95pct": 8,
+      "frac_top1_channel": 0.19308891892433167,
+      "frac_top5_channels": 0.7181974649429321,
+      "frac_top10_channels": 0.9798701405525208
+    },
+    "1": {
+      "total": 916.6695556640625,
+      "n_channels_for_50pct": 4,
+      "n_channels_for_80pct": 24,
+      "n_channels_for_95pct": 410,
+      "frac_top1_channel": 0.1552375704050064,
+      "frac_top5_channels": 0.6114325523376465,
+      "frac_top10_channels": 0.7665921449661255
+    },
+    "2": {
+      "total": 253.04653930664062,
+      "n_channels_for_50pct": 44,
+      "n_channels_for_80pct": 281,
+      "n_channels_for_95pct": 707,
+      "frac_top1_channel": 0.0439862422645092,
+      "frac_top5_channels": 0.1629217267036438,
+      "frac_top10_channels": 0.2601322531700134
+    },
+    "3": {
+      "total": 342.7638244628906,
+      "n_channels_for_50pct": 48,
+      "n_channels_for_80pct": 259,
+      "n_channels_for_95pct": 662,
+      "frac_top1_channel": 0.03261914849281311,
+      "frac_top5_channels": 0.1290641874074936,
+      "frac_top10_channels": 0.22192509472370148
+    },
+    "4": {
+      "total": 900.245849609375,
+      "n_channels_for_50pct": 7,
+      "n_channels_for_80pct": 25,
+      "n_channels_for_95pct": 404,
+      "frac_top1_channel": 0.1308930367231369,
+      "frac_top5_channels": 0.41996341943740845,
+      "frac_top10_channels": 0.6365929841995239
+    },
+    "5": {
+      "total": 1984.121337890625,
+      "n_channels_for_50pct": 5,
+      "n_channels_for_80pct": 115,
+      "n_channels_for_95pct": 485,
+      "frac_top1_channel": 0.16664405167102814,
+      "frac_top5_channels": 0.5267528295516968,
+      "frac_top10_channels": 0.6292687058448792
+    },
+    "6": {
+      "total": 510.9799499511719,
+      "n_channels_for_50pct": 7,
+      "n_channels_for_80pct": 121,
+      "n_channels_for_95pct": 605,
+      "frac_top1_channel": 0.0798378512263298,
+      "frac_top5_channels": 0.3785221576690674,
+      "frac_top10_channels": 0.5781554579734802
+    },
+    "7": {
+      "total": 326.71923828125,
+      "n_channels_for_50pct": 75,
+      "n_channels_for_80pct": 323,
+      "n_channels_for_95pct": 721,
+      "frac_top1_channel": 0.07504173368215561,
+      "frac_top5_channels": 0.18270066380500793,
+      "frac_top10_channels": 0.2353680282831192
+    },
+    "8": {
+      "total": 887.9027709960938,
+      "n_channels_for_50pct": 4,
+      "n_channels_for_80pct": 28,
+      "n_channels_for_95pct": 492,
+      "frac_top1_channel": 0.1619078814983368,
+      "frac_top5_channels": 0.5879694819450378,
+      "frac_top10_channels": 0.7389170527458191
+    },
+    "9": {
+      "total": 282.13360595703125,
+      "n_channels_for_50pct": 83,
+      "n_channels_for_80pct": 340,
+      "n_channels_for_95pct": 710,
+      "frac_top1_channel": 0.023731518536806107,
+      "frac_top5_channels": 0.09174428880214691,
+      "frac_top10_channels": 0.15329331159591675
+    },
+    "10": {
+      "total": 537.3233642578125,
+      "n_channels_for_50pct": 8,
+      "n_channels_for_80pct": 93,
+      "n_channels_for_95pct": 574,
+      "frac_top1_channel": 0.07695988565683365,
+      "frac_top5_channels": 0.36841368675231934,
+      "frac_top10_channels": 0.5560974478721619
+    },
+    "11": {
+      "total": 621.2305908203125,
+      "n_channels_for_50pct": 11,
+      "n_channels_for_80pct": 144,
+      "n_channels_for_95pct": 648,
+      "frac_top1_channel": 0.06580554693937302,
+      "frac_top5_channels": 0.306200236082077,
+      "frac_top10_channels": 0.49062278866767883
+    },
+    "12": {
+      "total": 397.57232666015625,
+      "n_channels_for_50pct": 24,
+      "n_channels_for_80pct": 240,
+      "n_channels_for_95pct": 682,
+      "frac_top1_channel": 0.07343307137489319,
+      "frac_top5_channels": 0.22268438339233398,
+      "frac_top10_channels": 0.33025112748146057
+    },
+    "13": {
+      "total": 302.4607849121094,
+      "n_channels_for_50pct": 70,
+      "n_channels_for_80pct": 321,
+      "n_channels_for_95pct": 686,
+      "frac_top1_channel": 0.03322857618331909,
+      "frac_top5_channels": 0.1371593326330185,
+      "frac_top10_channels": 0.2111085206270218
+    },
+    "14": {
+      "total": 464.26318359375,
+      "n_channels_for_50pct": 17,
+      "n_channels_for_80pct": 186,
+      "n_channels_for_95pct": 644,
+      "frac_top1_channel": 0.062253937125205994,
+      "frac_top5_channels": 0.2591010332107544,
+      "frac_top10_channels": 0.40042904019355774
+    },
+    "15": {
+      "total": 329.013916015625,
+      "n_channels_for_50pct": 56,
+      "n_channels_for_80pct": 294,
+      "n_channels_for_95pct": 699,
+      "frac_top1_channel": 0.03448367863893509,
+      "frac_top5_channels": 0.1314236968755722,
+      "frac_top10_channels": 0.20837123692035675
+    },
+    "16": {
+      "total": 284.138427734375,
+      "n_channels_for_50pct": 54,
+      "n_channels_for_80pct": 279,
+      "n_channels_for_95pct": 688,
+      "frac_top1_channel": 0.03544982150197029,
+      "frac_top5_channels": 0.1418924778699875,
+      "frac_top10_channels": 0.22684679925441742
+    },
+    "17": {
+      "total": 321.6539001464844,
+      "n_channels_for_50pct": 53,
+      "n_channels_for_80pct": 205,
+      "n_channels_for_95pct": 581,
+      "frac_top1_channel": 0.028643783181905746,
+      "frac_top5_channels": 0.10994543135166168,
+      "frac_top10_channels": 0.18366071581840515
+    },
+    "18": {
+      "total": 308.0340576171875,
+      "n_channels_for_50pct": 58,
+      "n_channels_for_80pct": 193,
+      "n_channels_for_95pct": 573,
+      "frac_top1_channel": 0.033732857555150986,
+      "frac_top5_channels": 0.10449115931987762,
+      "frac_top10_channels": 0.1699930876493454
+    },
+    "19": {
+      "total": 344.2997131347656,
+      "n_channels_for_50pct": 64,
+      "n_channels_for_80pct": 214,
+      "n_channels_for_95pct": 598,
+      "frac_top1_channel": 0.025481976568698883,
+      "frac_top5_channels": 0.11064561456441879,
+      "frac_top10_channels": 0.17245471477508545
+    },
+    "20": {
+      "total": 322.1919860839844,
+      "n_channels_for_50pct": 73,
+      "n_channels_for_80pct": 217,
+      "n_channels_for_95pct": 548,
+      "frac_top1_channel": 0.026055272668600082,
+      "frac_top5_channels": 0.0844106525182724,
+      "frac_top10_channels": 0.14434880018234253
+    },
+    "21": {
+      "total": 341.1648254394531,
+      "n_channels_for_50pct": 47,
+      "n_channels_for_80pct": 178,
+      "n_channels_for_95pct": 510,
+      "frac_top1_channel": 0.03216254711151123,
+      "frac_top5_channels": 0.11966576427221298,
+      "frac_top10_channels": 0.19651074707508087
+    },
+    "22": {
+      "total": 348.784912109375,
+      "n_channels_for_50pct": 65,
+      "n_channels_for_80pct": 197,
+      "n_channels_for_95pct": 546,
+      "frac_top1_channel": 0.029276864603161812,
+      "frac_top5_channels": 0.11079370975494385,
+      "frac_top10_channels": 0.1804897040128708
+    },
+    "23": {
+      "total": 423.85552978515625,
+      "n_channels_for_50pct": 55,
+      "n_channels_for_80pct": 179,
+      "n_channels_for_95pct": 511,
+      "frac_top1_channel": 0.03754522651433945,
+      "frac_top5_channels": 0.13333182036876678,
+      "frac_top10_channels": 0.2149898260831833
+    },
+    "24": {
+      "total": 322.22454833984375,
+      "n_channels_for_50pct": 73,
+      "n_channels_for_80pct": 199,
+      "n_channels_for_95pct": 503,
+      "frac_top1_channel": 0.019428374245762825,
+      "frac_top5_channels": 0.06825842708349228,
+      "frac_top10_channels": 0.1222575455904007
+    },
+    "25": {
+      "total": 367.1990966796875,
+      "n_channels_for_50pct": 60,
+      "n_channels_for_80pct": 240,
+      "n_channels_for_95pct": 621,
+      "frac_top1_channel": 0.02771029621362686,
+      "frac_top5_channels": 0.1257556974887848,
+      "frac_top10_channels": 0.20802836120128632
+    },
+    "26": {
+      "total": 270.5626525878906,
+      "n_channels_for_50pct": 73,
+      "n_channels_for_80pct": 251,
+      "n_channels_for_95pct": 631,
+      "frac_top1_channel": 0.038104187697172165,
+      "frac_top5_channels": 0.12097956240177155,
+      "frac_top10_channels": 0.17334330081939697
+    },
+    "27": {
+      "total": 251.3475341796875,
+      "n_channels_for_50pct": 77,
+      "n_channels_for_80pct": 317,
+      "n_channels_for_95pct": 677,
+      "frac_top1_channel": 0.035973478108644485,
+      "frac_top5_channels": 0.12360387295484543,
+      "frac_top10_channels": 0.18627969920635223
+    },
+    "28": {
+      "total": 278.1423034667969,
+      "n_channels_for_50pct": 64,
+      "n_channels_for_80pct": 248,
+      "n_channels_for_95pct": 632,
+      "frac_top1_channel": 0.03594000265002251,
+      "frac_top5_channels": 0.13144269585609436,
+      "frac_top10_channels": 0.19261102378368378
+    },
+    "29": {
+      "total": 280.2894287109375,
+      "n_channels_for_50pct": 75,
+      "n_channels_for_80pct": 239,
+      "n_channels_for_95pct": 572,
+      "frac_top1_channel": 0.021225888282060623,
+      "frac_top5_channels": 0.07457344233989716,
+      "frac_top10_channels": 0.12808792293071747
+    },
+    "30": {
+      "total": 329.261474609375,
+      "n_channels_for_50pct": 54,
+      "n_channels_for_80pct": 249,
+      "n_channels_for_95pct": 659,
+      "frac_top1_channel": 0.04444872960448265,
+      "frac_top5_channels": 0.1633192002773285,
+      "frac_top10_channels": 0.24926595389842987
+    },
+    "31": {
+      "total": 297.5871276855469,
+      "n_channels_for_50pct": 68,
+      "n_channels_for_80pct": 278,
+      "n_channels_for_95pct": 644,
+      "frac_top1_channel": 0.03403539955615997,
+      "frac_top5_channels": 0.10830330103635788,
+      "frac_top10_channels": 0.17422734200954437
+    },
+    "32": {
+      "total": 288.26202392578125,
+      "n_channels_for_50pct": 61,
+      "n_channels_for_80pct": 259,
+      "n_channels_for_95pct": 629,
+      "frac_top1_channel": 0.0347665473818779,
+      "frac_top5_channels": 0.12633220851421356,
+      "frac_top10_channels": 0.18955151736736298
+    },
+    "33": {
+      "total": 267.49566650390625,
+      "n_channels_for_50pct": 65,
+      "n_channels_for_80pct": 215,
+      "n_channels_for_95pct": 537,
+      "frac_top1_channel": 0.018255600705742836,
+      "frac_top5_channels": 0.08659017831087112,
+      "frac_top10_channels": 0.15143470466136932
+    },
+    "34": {
+      "total": 299.9945068359375,
+      "n_channels_for_50pct": 63,
+      "n_channels_for_80pct": 256,
+      "n_channels_for_95pct": 605,
+      "frac_top1_channel": 0.030842626467347145,
+      "frac_top5_channels": 0.11648693680763245,
+      "frac_top10_channels": 0.18813998997211456
+    },
+    "35": {
+      "total": 635.8050537109375,
+      "n_channels_for_50pct": 9,
+      "n_channels_for_80pct": 92,
+      "n_channels_for_95pct": 534,
+      "frac_top1_channel": 0.07585855573415756,
+      "frac_top5_channels": 0.32489144802093506,
+      "frac_top10_channels": 0.5305635333061218
+    }
+  },
+  "global_stats": {
+    "median_n_channels_for_50pct": 55.5,
+    "median_n_channels_for_80pct": 216.0,
+    "median_n_channels_for_95pct": 605.0,
+    "median_top1_frac": 0.0356949120759964,
+    "median_top10_frac": 0.20973987877368927
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "n_buckets": 4,
+  "bucket_edges": [
+    533.0,
+    585.0,
+    1021.25
+  ],
+  "bucket_labels": [
+    "\u2264 533",
+    "(533, 585]",
+    "(585, 1021]",
+    "> 1021"
+  ],
+  "training_train_accuracy": 1.0,
+  "n_test_problems": 6,
+  "n_evaluated": 6,
+  "n_correct": 5,
+  "test_accuracy": 0.8333333333333334,
+  "per_problem": [
+    {
+      "problem_idx": 81,
+      "prompt_len": 72,
+      "true_fdp": 8,
+      "true_bucket": 0,
+      "pred_bucket": 0,
+      "correct": true,
+      "probs": [
+        1.0,
+        2.9220769320040523e-18,
+        8.340988595829435e-22,
+        2.1262500877723934e-23
+      ],
+      "max_prob": 1.0,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 82,
+      "prompt_len": 110,
+      "true_fdp": 99,
+      "true_bucket": 0,
+      "pred_bucket": 2,
+      "correct": false,
+      "probs": [
+        0.062444914132356644,
+        0.004863436333835125,
+        0.9322400093078613,
+        0.0004515911277849227
+      ],
+      "max_prob": 0.9322400093078613,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 83,
+      "prompt_len": 47,
+      "true_fdp": 37,
+      "true_bucket": 0,
+      "pred_bucket": 0,
+      "correct": true,
+      "probs": [
+        1.0,
+        3.2041604101356607e-18,
+        3.021610402196299e-21,
+        4.1880052429621964e-22
+      ],
+      "max_prob": 1.0,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 84,
+      "prompt_len": 79,
+      "true_fdp": 45,
+      "true_bucket": 0,
+      "pred_bucket": 0,
+      "correct": true,
+      "probs": [
+        1.0,
+        1.8296914617185608e-18,
+        5.62852987938112e-22,
+        2.498606318988643e-23
+      ],
+      "max_prob": 1.0,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 85,
+      "prompt_len": 84,
+      "true_fdp": 43,
+      "true_bucket": 0,
+      "pred_bucket": 0,
+      "correct": true,
+      "probs": [
+        1.0,
+        3.4731855853713294e-21,
+        2.507483627134889e-25,
+        1.1990574825794583e-26
+      ],
+      "max_prob": 1.0,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 86,
+      "prompt_len": 61,
+      "true_fdp": 66,
+      "true_bucket": 0,
+      "pred_bucket": 0,
+      "correct": true,
+      "probs": [
+        1.0,
+        3.813940586916889e-19,
+        7.872511241033816e-23,
+        1.8269935734523585e-24
+      ],
+      "max_prob": 1.0,
+      "status": "ok"
+    }
+  ]
+}

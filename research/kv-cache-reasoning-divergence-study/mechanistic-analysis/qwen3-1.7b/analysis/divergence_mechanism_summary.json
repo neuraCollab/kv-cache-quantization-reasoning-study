@@ -1,0 +1,52 @@
+{
+  "mode": "ar",
+  "logit_kl_trajectory": {
+    "fp8_e4m3": {
+      "n_problems": 80,
+      "skipped": 0,
+      "kl_at_fdp_mean": 16.804473876953125,
+      "kl_at_fdp_minus_1_mean": 16.865367889404297,
+      "kl_at_fdp_plus_1_mean": 15.696942329406738,
+      "kl_pre_fdp_mean": 16.96800994873047,
+      "kl_post_fdp_mean": 18.77159309387207
+    },
+    "fp8_e5m2": {
+      "n_problems": 8,
+      "skipped": 72,
+      "kl_at_fdp_mean": 16.833454132080078,
+      "kl_at_fdp_minus_1_mean": 12.244861602783203,
+      "kl_at_fdp_plus_1_mean": 15.597018241882324,
+      "kl_pre_fdp_mean": 17.154186248779297,
+      "kl_post_fdp_mean": 17.533723831176758
+    }
+  },
+  "margin_trajectory": {
+    "n_problems": 80,
+    "margin_at_fdp_mean": 7.450976371765137,
+    "margin_at_fdp_median": 4.390625,
+    "margin_pre_fdp_mean": 7.087190628051758,
+    "margin_post_fdp_mean": 6.903242111206055
+  },
+  "layer_noise": {
+    "fp8_e4m3": {
+      "n_problems": 80,
+      "n_layers": 28,
+      "global_k_noise_mean": 0.02634977400793027,
+      "global_v_noise_mean": 0.02658265317156466,
+      "worst_layer_k": 0,
+      "worst_layer_k_noise": 0.028037770780103752,
+      "worst_layer_v": 0,
+      "worst_layer_v_noise": 0.02660586692885183
+    },
+    "fp8_e5m2": {
+      "n_problems": 80,
+      "n_layers": 28,
+      "global_k_noise_mean": 0.05217372131630537,
+      "global_v_noise_mean": 0.0527169619981476,
+      "worst_layer_k": 0,
+      "worst_layer_k_noise": 0.05567135992605801,
+      "worst_layer_v": 13,
+      "worst_layer_v_noise": 0.052860787714397596
+    }
+  }
+}

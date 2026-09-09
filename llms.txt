@@ -1,0 +1,46 @@
+# kv-trace-study
+
+> Reproducible pipeline + completed results for diagnosing *how* KV-cache
+> quantization (FP8 E4M3/E5M2, HQQ INT4/INT2) breaks chain-of-thought
+> reasoning in compact reasoning models (DeepSeek-R1-Distill-Qwen-1.5B/7B,
+> Qwen3-1.7B), not just how much it degrades accuracy. Python 3.10/3.11,
+> pydantic-config-driven, vLLM + HuggingFace/HQQ generation backends, Claude
+> as an LLM judge for failure-mode classification.
+
+Two layers live in this repo: a tested, CI-gated **pipeline** (`src/kvtrace/`,
+`scripts/`) that anyone can re-run, and a **research/** tree holding the
+already-completed study's results, report, and adjacent exploratory/theory
+work. Read `README.md` first, then `research/README.md`.
+
+## Pipeline (do work here)
+
+- [README.md](README.md): install, env vars, how to run all 4 phases, testing markers, repo layout.
+- [src/kvtrace/config.py](src/kvtrace/config.py): pydantic schema for `config/*.yaml` — the single source of truth for models/quant-methods/pipeline params.
+- [src/kvtrace/generators/vllm_gen.py](src/kvtrace/generators/vllm_gen.py) / [hf_gen.py](src/kvtrace/generators/hf_gen.py): the two generation backends (vLLM for bf16/FP8; HF+HQQ for INT4/INT2). `hf_gen.py` has extensive inline comments documenting real GPU bugs it works around (device placement, eager attention, transformers version pin) — read them before touching this file.
+- [src/kvtrace/fdp/finder.py](src/kvtrace/fdp/finder.py): hybrid token-exact + semantic-resync First-Divergence-Point algorithm.
+- [src/kvtrace/judge/](src/kvtrace/judge/): taxonomy (6 failure categories A-F), prompt builder (Anthropic prompt caching), Claude client with SHA256 on-disk cache.
+- [src/kvtrace/analysis/](src/kvtrace/analysis/): chi-square/Cramér's V signature aggregation + markdown/JSON/plot report.
+- [scripts/01_generate_traces.py](scripts/01_generate_traces.py) … [04_analyze.py](scripts/04_analyze.py): the four CLI phases, driven by [scripts/run_all.sh](scripts/run_all.sh) (never hard-fails mid-run — logs and continues). [scripts/verify_run.py](scripts/verify_run.py): post-run artifact sanity check.
+- [tests/](tests/): one test file per module; CI runs `pytest -m "not gpu and not live_api" --cov=src/kvtrace --cov-fail-under=85`. `@pytest.mark.gpu` and `@pytest.mark.live_api` are skipped in CI — run manually before a real GPU/API session (see README "Testing").
+- [docs/superpowers/plans/2026-04-25-kv-trace-study.md](docs/superpowers/plans/2026-04-25-kv-trace-study.md) / [docs/superpowers/specs/2026-04-25-kv-trace-study-design.md](docs/superpowers/specs/2026-04-25-kv-trace-study-design.md): original TDD implementation plan and design spec (9 phases, ~30 tasks — all implemented; checkboxes in the plan file are stale, don't trust them for status).
+
+## Research results (read before re-deriving conclusions)
+
+- [research/README.md](research/README.md): index of everything below.
+- [research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md): **the actual finished write-up** — hypotheses H1-H3, methodology, results, limitations, future work. Read this before assuming anything about the study needs to be re-run.
+- [research/kv-cache-reasoning-divergence-study/data/](research/kv-cache-reasoning-divergence-study/data/): the real traces/fdps/judgments from the completed run (11 traces, 10 FDP files, 8 judgment files — HQQ for Qwen3-1.7B and DeepSeek-7B was never collected, see limitations).
+- [research/kv-cache-reasoning-divergence-study/mechanistic-analysis/](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/): deeper per-model internals probes (attention-shift KL, layer ablation, failure prediction). **Generating code was not found anywhere** — only output artifacts survived; don't assume a runnable script exists for this.
+- [research/prior-prototype/](research/prior-prototype/): superseded early iteration, historical only, not wired into the current pipeline.
+- [research/general-kv-cache-quantization-bench/](research/general-kv-cache-quantization-bench/), [research/custom-quantizer-and-theory/](research/custom-quantizer-and-theory/): adjacent/background work (general quantization benchmarking on Llama-3-8B; literature review + formal error-bound theory + from-scratch GPTQ/WaterSIC quantizer implementations). Independent of the main reasoning-trace study.
+
+## Known gaps (don't assume these exist without checking)
+
+- **`scripts/05_paper_analysis.py` does not exist.** `supervisor_report.md` references it as the script that generated `research/.../paper/*.png` and `research/.../tables/*.md` (accuracy_bars, per_model_chi2, quant_only_deepdives, divergence_position, token_efficiency, finish_reason, judge_confidence, fdp_rate — 8 reports total). Only its outputs survived; the script itself must be written from scratch against those artifact names/schemas if reproducibility is needed.
+- **HQQ coverage is partial by design**: `qwen3-1.7b × {hqq_int4,hqq_int2}` and `deepseek-r1-distill-qwen-7b × {hqq_int4,hqq_int2}` were never generated (transformers ≥4.55 regression broke HQQ + eager-attention path was too slow within budget). This is documented, not a bug to fix silently.
+- `quanrization/_redundant_safe_to_delete/` at repo root holds confirmed-duplicate data set aside during a cleanup pass — safe to `rm -rf`, not yet done by the user as of this writing.
+
+## Conventions
+
+- Config-driven: never hardcode model/quant params — add to `config/*.yaml` and `src/kvtrace/config.py`'s pydantic schema.
+- `requirements.txt` pins `transformers<4.52` deliberately (4.55.x breaks HQQ KV cache) — don't "helpfully" bump it.
+- Git commits in this repo end with `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>`; adjust the attribution line for whichever agent is committing.

@@ -1,0 +1,4 @@
+model,chi2,dof,p_value,cramers_v,n,quants
+deepseek-r1-distill-qwen-1.5b,64.3327,9,1.944927e-10,0.2589,320,fp8_e4m3+fp8_e5m2+hqq_int4+hqq_int2
+qwen3-1.7b,5.5951,5,3.476308e-01,0.1888,157,fp8_e4m3+fp8_e5m2
+deepseek-r1-distill-qwen-7b,9.5364,2,8.495557e-03,0.2441,160,fp8_e4m3+fp8_e5m2

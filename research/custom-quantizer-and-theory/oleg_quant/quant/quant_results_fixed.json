@@ -1,0 +1,17 @@
+{
+    "FP16 (Base)": {
+        "memory_mb": 8906.3,
+        "tokens_per_sec": 1.67,
+        "load_time_sec": 6.49
+    },
+    "INT8 (LLM.int8)": {
+        "memory_mb": 8673.88,
+        "tokens_per_sec": 2.66,
+        "load_time_sec": 13.82
+    },
+    "ZeroQuant (NF4 4bit)": {
+        "memory_mb": 5447.2,
+        "tokens_per_sec": 1.66,
+        "load_time_sec": 10.74
+    }
+}
