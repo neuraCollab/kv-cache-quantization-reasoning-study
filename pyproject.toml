@@ -35,6 +35,11 @@ show_missing = true
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+# research/ holds historical/reference material (an early prototype, theory
+# notebooks, a general quantization benchmark) that predates this repo's
+# lint standards and isn't part of the maintained package — not worth
+# retrofitting to current rules.
+extend-exclude = ["research/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B"]

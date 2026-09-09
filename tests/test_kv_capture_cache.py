@@ -97,3 +97,56 @@ def test_snapshot_reflects_post_quantization_values():
 def test_snapshot_empty_before_any_update():
     cache = FakeQuantCache(variant="bf16")
     assert cache.snapshot() == {}
+
+
+# ---------------------------------------------------------------------------
+# layers= (single-layer ablation, report §4.5)
+# ---------------------------------------------------------------------------
+
+
+def test_layers_param_skips_quantization_on_excluded_layers():
+    cache = FakeQuantCache(variant="fp8_e4m3", layers={1})
+    k, v = _kv()
+    out_k0, _ = cache.update(k, v, layer_idx=0)  # not in {1} -> passthrough
+    assert torch.equal(out_k0, k)
+
+
+def test_layers_param_still_quantizes_included_layers():
+    cache = FakeQuantCache(variant="fp8_e4m3", layers={1})
+    k, v = _kv()
+    out_k1, _ = cache.update(k, v, layer_idx=1)  # in {1} -> quantized
+    assert not torch.equal(out_k1, k)
+
+
+def test_layers_none_quantizes_every_layer_as_before():
+    cache = FakeQuantCache(variant="fp8_e4m3", layers=None)
+    k, v = _kv()
+    out_k, _ = cache.update(k, v, layer_idx=7)
+    assert not torch.equal(out_k, k)
+
+
+# ---------------------------------------------------------------------------
+# protected_channels= (per-channel defense, report §5)
+# ---------------------------------------------------------------------------
+
+
+def test_protected_channels_are_kept_lossless():
+    cache = FakeQuantCache(variant="fp8_e4m3", protected_channels={0: [2, 5]})
+    k, v = _kv(shape=(1, 2, 4, 8))
+    out_k, _ = cache.update(k, v, layer_idx=0)
+    assert torch.equal(out_k[..., 2], k[..., 2])
+    assert torch.equal(out_k[..., 5], k[..., 5])
+
+
+def test_unprotected_channels_still_get_quantized():
+    cache = FakeQuantCache(variant="fp8_e4m3", protected_channels={0: [2, 5]})
+    k, v = _kv(shape=(1, 2, 4, 8))
+    out_k, _ = cache.update(k, v, layer_idx=0)
+    assert not torch.equal(out_k[..., 0], k[..., 0])
+
+
+def test_protected_channels_only_apply_to_their_own_layer():
+    cache = FakeQuantCache(variant="fp8_e4m3", protected_channels={0: [2, 5]})
+    k, v = _kv(shape=(1, 2, 4, 8))
+    out_k, _ = cache.update(k, v, layer_idx=1)  # no protection entry for layer 1
+    assert not torch.equal(out_k[..., 2], k[..., 2])

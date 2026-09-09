@@ -41,13 +41,22 @@ Five idempotent phases:
    torch's native `float8_e4m3fn`/`float8_e5m2` dtypes, since vLLM doesn't
    expose per-layer K/V for introspection; HQQ via the real production
    `QuantizedCache`), capturing per-layer attention-shift KL, KV statistics,
-   logit-KL trajectory, and outlier-channel scores. Reconstructs the
-   *infrastructure* behind
+   logit-KL trajectory, and outlier-channel scores, plus three follow-on
+   analyses grounded in the author's recovered NIR report:
+   `scripts/07_layer_ablation.py` (single-layer ablation, quantizing one
+   layer at a time), `scripts/08_defense_recipe.py` (the "protect top-N
+   outlier channels in bf16" recipe — both a teacher-forced measurement and
+   a real autoregressive `model.generate()` validation, since the report
+   found the lab-measured benefit mostly disappears in real generation),
+   and `scripts/09_multiseed_jaccard.py` (outlier-channel identity across
+   sampling seeds). Reconstructs this much of
    [`research/kv-cache-reasoning-divergence-study/mechanistic-analysis/`](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/)
-   (whose original code wasn't recovered) — not the full set of analyses
-   there (layer ablation, counterfactual skip-K, the CNN failure-predictor,
-   and multi-seed variance runs aren't covered). The hook/capture plumbing
-   is verified end-to-end against a tiny real model on CPU
+   (whose original code wasn't recovered, only its outputs) — the CNN
+   failure-predictor is deliberately not implemented (needs further work
+   first), and "counterfactual skip-K" isn't described anywhere in the
+   recovered report, so nothing was reconstructed for it. The hook/capture
+   plumbing (including real `model.generate()` with a custom cache) is
+   verified end-to-end against a tiny real model on CPU
    (`pytest -m network`); it has not been run against the actual study
    models, which need a GPU this repo doesn't have.
 

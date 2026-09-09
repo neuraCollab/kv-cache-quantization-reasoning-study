@@ -74,3 +74,34 @@ def outlier_channel_scores(k: torch.Tensor) -> torch.Tensor:
     max_per_channel = k.float().abs().amax(dim=tuple(range(k.dim() - 1)))
     denom = max_per_channel.median().clamp_min(_EPS)
     return max_per_channel / denom
+
+
+def top_n_outlier_channels(k: torch.Tensor, n: int) -> list[int]:
+    """Indices of the `n` channels with the largest max_t|K[..., t, c]|
+    (report §5.1's defense-recipe channel selection), most-outlying first.
+    """
+    max_per_channel = k.float().abs().amax(dim=tuple(range(k.dim() - 1)))
+    n = min(n, max_per_channel.numel())
+    return max_per_channel.topk(n).indices.tolist()
+
+
+def relative_frobenius_error(k_pre: torch.Tensor, k_post: torch.Tensor) -> float:
+    """eps = ||K_pre - K_post||_F / ||K_pre||_F (report §3.3, metric 1).
+
+    Pooled over every dim (not per (layer, head) — call this once per layer,
+    or once per (layer, head) slice, as needed).
+    """
+    diff_norm = (k_post.float() - k_pre.float()).norm()
+    denom = k_pre.float().norm().clamp_min(_EPS)
+    return float(diff_norm / denom)
+
+
+def channel_jaccard(a: list[int], b: list[int]) -> float:
+    """Jaccard similarity |a ∩ b| / |a ∪ b| between two channel-index sets
+    (report §4.3: outlier-channel identity stability across sampling seeds).
+    """
+    sa, sb = set(a), set(b)
+    union = sa | sb
+    if not union:
+        return 0.0
+    return len(sa & sb) / len(union)

@@ -20,8 +20,8 @@ work. Read `README.md` first, then `research/README.md`.
 - [src/kvtrace/fdp/finder.py](src/kvtrace/fdp/finder.py): hybrid token-exact + semantic-resync First-Divergence-Point algorithm.
 - [src/kvtrace/judge/](src/kvtrace/judge/): taxonomy (6 failure categories A-F), prompt builder (Anthropic prompt caching), Claude client with SHA256 on-disk cache.
 - [src/kvtrace/analysis/](src/kvtrace/analysis/): chi-square/Cramér's V signature aggregation + markdown/JSON/plot report (Phase 4), plus per-model tables/plots for the paper (Phase 5, see below).
-- [src/kvtrace/kv_capture/](src/kvtrace/kv_capture/): mechanistic capture (Phase 6) — `cache.py` (FP8 fake-quant / HQQ `Cache` subclasses that also record per-layer K/V), `metrics.py` (pure-tensor KL/outlier-channel math), `capture_generator.py` (ties model+cache+hooks together; GPU-only, omitted from coverage like `generators/{vllm,hf}_gen.py`).
-- [scripts/01_generate_traces.py](scripts/01_generate_traces.py) … [06_kv_capture.py](scripts/06_kv_capture.py): the six CLI phases, driven by [scripts/run_all.sh](scripts/run_all.sh) for 1-5 (never hard-fails mid-run — logs and continues; Phase 6 isn't wired into it, it's per-(model,quant) opt-in). [scripts/verify_run.py](scripts/verify_run.py): post-run artifact sanity check.
+- [src/kvtrace/kv_capture/](src/kvtrace/kv_capture/): mechanistic capture (Phase 6) — `cache.py` (FP8 fake-quant / HQQ `Cache` subclasses that also record per-layer K/V, plus `layers=`/`protected_channels=` for ablation/defense), `metrics.py` (pure-tensor KL/outlier-channel/Jaccard math), `capture_generator.py` (ties model+cache+hooks together: capture, single-layer ablation, defense recipe TF+AR, multi-seed Jaccard; GPU-only, omitted from coverage like `generators/{vllm,hf}_gen.py`).
+- [scripts/01_generate_traces.py](scripts/01_generate_traces.py) … [09_multiseed_jaccard.py](scripts/09_multiseed_jaccard.py): the nine CLI phases, driven by [scripts/run_all.sh](scripts/run_all.sh) for 1-5 (never hard-fails mid-run — logs and continues; Phase 6+ isn't wired into it, each is per-(model,quant) opt-in). [scripts/verify_run.py](scripts/verify_run.py): post-run artifact sanity check.
 - [tests/](tests/): one test file per module; CI runs `pytest -m "not gpu and not live_api and not network" --cov=src/kvtrace --cov-fail-under=85`. `@pytest.mark.gpu`/`live_api`/`network` are skipped in CI — run manually (see README "Testing"). `network` downloads a tiny real HF model to verify `kv_capture/` hook wiring without a GPU.
 - [docs/superpowers/plans/2026-04-25-kv-trace-study.md](docs/superpowers/plans/2026-04-25-kv-trace-study.md) / [docs/superpowers/specs/2026-04-25-kv-trace-study-design.md](docs/superpowers/specs/2026-04-25-kv-trace-study-design.md): original TDD implementation plan and design spec (9 phases, ~30 tasks — all implemented; checkboxes in the plan file are stale, don't trust them for status).
 
@@ -30,14 +30,16 @@ work. Read `README.md` first, then `research/README.md`.
 - [research/README.md](research/README.md): index of everything below.
 - [research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md): **the actual finished write-up** — hypotheses H1-H3, methodology, results, limitations, future work. Read this before assuming anything about the study needs to be re-run.
 - [research/kv-cache-reasoning-divergence-study/data/](research/kv-cache-reasoning-divergence-study/data/): the real traces/fdps/judgments from the completed run (11 traces, 10 FDP files, 8 judgment files — HQQ for Qwen3-1.7B and DeepSeek-7B was never collected, see limitations).
-- [research/kv-cache-reasoning-divergence-study/mechanistic-analysis/](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/): deeper per-model internals probes (attention-shift KL, layer ablation, failure prediction). **Original generating code was not found anywhere** — only output artifacts survived. `src/kvtrace/kv_capture/` (Phase 6) reconstructs the capture *infrastructure* only (attention-shift KL, KV stats, logit-KL trajectory, outlier channels) — layer ablation, counterfactual skip-K, the CNN failure-predictor, defense validation, and multi-seed variance are not covered.
+- [research/kv-cache-reasoning-divergence-study/mechanistic-analysis/](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/): deeper per-model internals probes (attention-shift KL, layer ablation, failure prediction). **Original generating code was not found anywhere** — only output artifacts survived — but the *methodology* was later recovered from the author's own NIR report (a PDF, not in this repo; ask the user for it if you need the exact section numbers again). `src/kvtrace/kv_capture/` (Phase 6, `scripts/06-09_*.py`) reconstructs: the capture infrastructure (attention-shift KL, KV stats, logit-KL trajectory, outlier channels), single-layer ablation, the per-channel defense recipe (TF + real AR `generate()` validation), and multi-seed channel-Jaccard. Deliberately not covered: the CNN failure-predictor (excluded on instruction — needs further work first) and "counterfactual skip-K" (not described anywhere in the recovered report — nothing to reconstruct against).
 - [research/prior-prototype/](research/prior-prototype/): superseded early iteration, historical only, not wired into the current pipeline.
 - [research/general-kv-cache-quantization-bench/](research/general-kv-cache-quantization-bench/), [research/custom-quantizer-and-theory/](research/custom-quantizer-and-theory/): adjacent/background work (general quantization benchmarking on Llama-3-8B; literature review + formal error-bound theory + from-scratch GPTQ/WaterSIC quantizer implementations). Independent of the main reasoning-trace study.
 
 ## Known gaps (don't assume these exist without checking)
 
 - **HQQ coverage is partial by design**: `qwen3-1.7b × {hqq_int4,hqq_int2}` and `deepseek-r1-distill-qwen-7b × {hqq_int4,hqq_int2}` were never generated (transformers ≥4.55 regression broke HQQ + eager-attention path was too slow within budget). This is documented, not a bug to fix silently.
-- **Most of `mechanistic-analysis/` is still not reconstructed**: only the capture infrastructure (Phase 6, below) exists. `layer_ablation_*.npz`, `counterfactual_skipK_*.json`, `failure_prediction_*.json`/`cnn_buckets_test.json`/`fdp_predictor*.json` (a trained classifier — architecture unknown), `defense_validation_e2e.json`, and `qwen3-1.7b_multiseed/` variance have no code and none was attempted — there's no ground truth to verify a guess against.
+- **The CNN failure-predictor is not implemented** (`failure_prediction_*.json`/`cnn_buckets_test.json`/`fdp_predictor*.json`) — excluded on explicit instruction, needs further work by the report's author first. Don't build this without being asked again.
+- **"Counterfactual skip-K" (`counterfactual_skipK_*.json`) has no reconstruction and none is possible from what's available** — grep the recovered NIR report text for "skip"/"counterfactual"/"ñêèï" and you'll find nothing; whatever this was, it isn't described in the one source that grounds everything else here.
+- **Cross-family aggregation (report Part 6, the "concentration→recovery ≈ 0.65×" law across 4 models) isn't implemented** — `--model` on scripts 06-09 lets you run any single model, but nothing fits the cross-model law or reproduces Qwen3-4B/Qwen2.5-1.5B/SmolLM2-1.7B comparisons yet.
 - **Phase 6 (`kv_capture/`) has never run against a real study model** — no GPU available in this dev environment. Only verified via a tiny (untrained) real Qwen2-architecture model on CPU (`pytest -m network`). Treat it as plumbing proven correct, not as validated against the actual 1.5B-7B models.
 - `quanrization/_redundant_safe_to_delete/` and now-empty `quanrization/nir/` at repo root hold confirmed-duplicate/emptied data set aside during a cleanup pass — safe to `rm -rf quanrization`, not yet done by the user as of this writing.
 
@@ -58,22 +60,50 @@ corrupted files were found and removed:
 `qwen3-1.7b_fp8_e4m3.jsonl` mislabeled under the wrong filename (contradicted
 the documented "HQQ for Qwen3 never collected" claim above).
 
-## Phase 6 (kv_capture — infrastructure only, unverified against real models)
+## Phase 6 (kv_capture — grounded in a recovered report, unverified against real models)
 
-`scripts/06_kv_capture.py` + `src/kvtrace/kv_capture/{cache,metrics,capture_generator}.py`
-are new, not a reconstruction of lost code (there's nothing to reconstruct
-against — see "known gaps"). Design: teacher-force an already-generated bf16
-trace (`token_ids` from `outputs/traces/{model}_bf16.jsonl`) through the real
-model twice — once under a passthrough `bf16` cache, once under a quantized
-one — and diff per-layer attention/logits/KV. `FakeQuantCache` fake-quantizes
-via torch's native `float8_e4m3fn`/`float8_e5m2` dtypes (a real
-quantize→dequantize round trip) because vLLM's actual FP8 kernels aren't
-introspectable; HQQ variants wrap the real production
-`transformers.cache_utils.QuantizedCache(backend="HQQ")`. Both must be real
-`Cache` subclasses, not a duck-typed wrapper — Transformers' modeling code
-does `isinstance(past_key_values, Cache)` and rejects anything else (this
-broke an earlier wrapper-based design; `CaptureMixin` + real subclassing
-fixed it — see `tests/test_kv_capture_cache.py::test_fake_quant_cache_is_a_real_transformers_cache`).
+`scripts/06-09_*.py` + `src/kvtrace/kv_capture/{cache,metrics,capture_generator}.py`.
+Initially there was nothing to reconstruct against (only output artifacts,
+no ground-truth numbers, unlike Phase 5) — but the user later supplied the
+author's own NIR report (PDF, not committed to this repo) describing the
+exact methodology, so this is now a grounded reimplementation of 4 of its
+experiments, not a guess:
+
+- **Capture** (`06_kv_capture.py`, report §3.1/§3.3): teacher-force an
+  already-generated bf16 trace (`token_ids` from
+  `outputs/traces/{model}_bf16.jsonl`) through the real model twice — once
+  under a passthrough `bf16` cache, once under a quantized one — and diff
+  per-layer attention/logits/KV. `FakeQuantCache` fake-quantizes via torch's
+  native `float8_e4m3fn`/`float8_e5m2` dtypes (a real quantize→dequantize
+  round trip) because vLLM's actual FP8 kernels aren't introspectable —
+  matches the report's own approach (it also bypasses vLLM, via a
+  `DynamicCache.update` monkey-patch for the same reason); HQQ variants wrap
+  the real production `transformers.cache_utils.QuantizedCache(backend="HQQ")`.
+  Both must be real `Cache` subclasses, not a duck-typed wrapper —
+  Transformers' modeling code does `isinstance(past_key_values, Cache)` and
+  rejects anything else (this broke an earlier wrapper-based design;
+  `CaptureMixin` + real subclassing fixed it — see
+  `tests/test_kv_capture_cache.py::test_fake_quant_cache_is_a_real_transformers_cache`).
+- **Layer ablation** (`07_layer_ablation.py`, report §4.5): `FakeQuantCache(layers={5})`
+  quantizes only layer 5, every other layer stays bf16 — rank layers by
+  logit-impact KL against the all-bf16 baseline.
+- **Defense recipe** (`08_defense_recipe.py`, report §5): `FakeQuantCache(protected_channels={5: [...]})`
+  keeps listed K channels lossless even in a quantized layer (K only, not V
+  — matches the report). Two validations: teacher-forced (§5.2/§5.3, looks
+  effective: -34% K-error) and real `model.generate(past_key_values=cache, output_scores=True)`
+  autoregressive decoding (§5.4, where the report found the benefit
+  shrinks to -2.4% logit-KL — the report's "lab→production gap" finding,
+  Ф.2). FP8-only — §5.3 found this recipe makes HQQ *worse* by fighting its
+  per-group calibration, so `build_cache` raises if you pass
+  `protected_channels` with an HQQ variant.
+- **Multi-seed Jaccard** (`09_multiseed_jaccard.py`, report §4.3): sample at
+  `T=0.6` with several seeds, compare each run's top-N outlier channels via
+  `channel_jaccard` — checks whether outlier-channel identity is a weight
+  property (report: median 0.879) vs. sampling noise.
+
+Every formula above (`relative_frobenius_error`, `_kl_from_probs`,
+`top_n_outlier_channels`, `channel_jaccard`) was checked against the
+report's own stated definitions in §3.3/§4.3/§5.1, not invented.
 
 ## Dev environment note
 

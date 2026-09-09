@@ -128,34 +128,64 @@ not part of the main 3-model study; they appear to be one-off probes).
 
 **The scripts that generated these artifacts were not found anywhere in the
 source material this was consolidated from** — only the output JSON/NPZ/PNG
-files survived, and unlike Phase 5's tables there is no exact ground truth
-to verify a reconstruction against (these need real per-layer attention/KV/
-logit tensors from an actual forward pass — nothing here is derivable from
-already-generated text alone).
+files survived. Unlike Phase 5's tables, there's no exact ground truth
+(specific numbers) to verify a reconstruction against — these need real
+per-layer attention/KV/logit tensors from an actual forward pass, nothing
+here is derivable from already-generated text alone. However, the *methodology*
+was later recovered from a separate source: the author's own NIR
+(научно-исследовательская работа) report
+(`Механистический анализ расхождения KV-кэша при FP8/HQQ-квантизации в
+reasoning-моделях...`, ЛЭТИ/СПбГУ, гр. БД116, 2026), which describes the
+capture pipeline and every experiment below in enough detail to reimplement
+correctly — see the exact section numbers cited inline.
 
-**Partial reconstruction — infrastructure only.** `src/kvtrace/kv_capture/`
-+ `scripts/06_kv_capture.py` (repo root) rebuild the *capture* layer this
-would need: a KV cache that fake-quantizes to FP8 (via torch's native
-`float8_e4m3fn`/`float8_e5m2`, since vLLM doesn't expose K/V for
-introspection) or wraps the real production HQQ `QuantizedCache`, teacher-
-forces an already-generated bf16 trace through the model under it, and
-computes attention-shift KL, per-layer KV stats, logit-KL trajectory, and
-outlier-channel scores — the building blocks behind
-`attention_shift_summary_*.json`, `kv_stats_per_layer_*.json`,
-`logits_kl_*.json`, and `outlier_channel_impact_*.json`.
+**Reconstruction — capture infrastructure + 4 of the report's experiments.**
+`src/kvtrace/kv_capture/` + `scripts/06-09_*.py` (repo root):
 
-**Not covered**, and not attempted, because they'd need designing an entire
-methodology from filenames alone with nothing to check it against:
-`layer_ablation_*.npz`, `counterfactual_skipK_*.json`,
-`failure_prediction_*.json` / `cnn_buckets_test.json` / `fdp_predictor*.json`
-(a trained classifier — architecture unknown), `defense_validation_e2e.json`,
-`per_channel_defense_*.json`, and the `qwen3-1.7b_multiseed/` variance runs.
+- `06_kv_capture.py` — the capture layer: a KV cache that fake-quantizes to
+  FP8 (via torch's native `float8_e4m3fn`/`float8_e5m2`, since vLLM doesn't
+  expose K/V for introspection — the report's own capture harness also
+  bypasses vLLM for this reason, via a `DynamicCache.update` monkey-patch,
+  §3.1) or wraps the real production HQQ `QuantizedCache`; teacher-forces an
+  already-generated bf16 trace through the model under it; computes
+  attention-shift KL, per-layer KV stats, logit-KL trajectory, and
+  outlier-channel scores (report §3.3's three metrics: relative Frobenius
+  K-error, attention-map KL, First Divergence Point).
+- `07_layer_ablation.py` — single-layer ablation (report §4.5): quantize
+  exactly one layer at a time, rank layers by logit-impact KL against the
+  all-bf16 baseline.
+- `08_defense_recipe.py` — the "protect top-N outlier channels in bf16"
+  defense recipe (report §5): a teacher-forced measurement (§5.2/§5.3, where
+  it looks effective) and a real autoregressive `model.generate()`
+  validation (§5.4, where the report found the benefit mostly disappears —
+  the "lab→production gap", one of the report's three headline findings).
+  FP8-only per §5.3 (the report found this recipe actively *hurts* HQQ).
+- `09_multiseed_jaccard.py` — outlier-channel identity across sampling seeds
+  (report §4.3): generate at `T=0.6` with several seeds, measure Jaccard
+  overlap of each run's top-N channels, to check whether outlier-channel
+  identity is a weight property (report: median Jaccard 0.879) rather than a
+  sampling artifact.
+
+**Still not covered** — the CNN failure-predictor (report Part 7,
+`failure_prediction_*.json`/`cnn_buckets_test.json`/`fdp_predictor*.json`)
+was deliberately excluded per instruction (needs further work by the report's
+author before it's worth reimplementing). "Counterfactual skip-K"
+(`counterfactual_skipK_*.json`) was *not* found anywhere in the recovered
+report text — it isn't described there, so nothing was reconstructed for it
+rather than guessing at an undocumented method. Cross-family validation
+across the report's other 3 models (Qwen2.5-1.5B, SmolLM2-1.7B, Qwen3-4B —
+report Part 6, the "concentration→recovery" law) is possible with the
+existing `--model` flag but the aggregation/law-fitting step across models
+hasn't been written.
 
 The capture plumbing itself (hooking a real `Cache` subclass into a real
-forward pass, `output_attentions`/`output_hidden_states` capture, the
-baseline-vs-quant diff) is verified end-to-end against a tiny real
+forward pass, `output_attentions`/`output_hidden_states` capture, real
+`model.generate()` with a custom cache and `output_scores=True`, the
+baseline-vs-quant/defended diffs) is verified end-to-end against a tiny real
 Qwen2-architecture model on CPU — `pytest -m network`
 (`tests/test_kv_capture_generator.py`) — since the actual 1.5B-7B study
-models need a GPU this repo doesn't have. That test passing proves the
-wiring works, not that any specific number here would be reproduced; there's
-no way to check that without running it against the real models.
+models need a GPU this repo doesn't have. That proves the wiring and
+formulas are implemented correctly (e.g. the relative-Frobenius-error and
+channel-Jaccard metrics match the report's own definitions exactly), not
+that any specific *number* here would reproduce the report's — there's no
+way to check that without running it against the real models.
