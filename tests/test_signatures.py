@@ -5,7 +5,10 @@ from kvtrace.analysis.signatures import (
     aggregate_counts,
     chi_square_test,
     cramers_v,
+    effect_size_label,
+    natural_dof,
     row_normalize,
+    standardized_residuals,
 )
 
 
@@ -71,3 +74,54 @@ def test_cramers_v_in_unit_interval():
 def test_aggregate_counts_empty_raises():
     with pytest.raises(ValueError):
         aggregate_counts([])
+
+
+# Real matrix from research/kv-cache-reasoning-divergence-study/tables/per_model_chi2.md
+# (deepseek-r1-distill-qwen-1.5b, rows fp8_e4m3/fp8_e5m2/hqq_int4/hqq_int2, cols A-F).
+# Categories B and C are all-zero for this model.
+_DEEPSEEK_1_5B_MATRIX = np.array(
+    [
+        [5, 0, 0, 20, 0, 55],
+        [1, 0, 0, 2, 1, 76],
+        [4, 0, 0, 5, 10, 61],
+        [0, 0, 0, 6, 18, 56],
+    ],
+    dtype=float,
+)
+
+
+def test_natural_dof_drops_allzero_columns():
+    # 4 rows, only 4 of 6 categories ever nonzero -> (4-1)*(4-1) = 9,
+    # not the nominal (4-1)*(6-1) = 15 that chi_square_test's dof reports.
+    assert natural_dof(_DEEPSEEK_1_5B_MATRIX) == 9
+
+
+def test_natural_dof_all_categories_present():
+    m = np.array([[5, 5, 37, 4, 22, 7], [6, 12, 27, 7, 19, 6]], dtype=float)
+    assert natural_dof(m) == 5
+
+
+def test_standardized_residuals_matches_known_values():
+    r = standardized_residuals(_DEEPSEEK_1_5B_MATRIX)
+    assert r.shape == _DEEPSEEK_1_5B_MATRIX.shape
+    # fp8_e4m3 row, category D (idx 3): reported as +4.09 in per_model_chi2.md
+    assert r[0, 3] == pytest.approx(4.09, abs=0.01)
+    # hqq_int2 row, category E (idx 4): reported as +3.99
+    assert r[3, 4] == pytest.approx(3.99, abs=0.01)
+
+
+def test_standardized_residuals_zero_for_allzero_column():
+    # Categories B and C (idx 1, 2) are all-zero across every row -> residual 0,
+    # not NaN from a 0/0 division.
+    r = standardized_residuals(_DEEPSEEK_1_5B_MATRIX)
+    assert np.all(r[:, 1] == 0.0)
+    assert np.all(r[:, 2] == 0.0)
+
+
+def test_effect_size_label_buckets():
+    assert effect_size_label(0.05) == "negligible"
+    assert effect_size_label(0.189) == "small-to-moderate"
+    assert effect_size_label(0.259) == "small-to-moderate"
+    assert effect_size_label(0.244) == "small-to-moderate"
+    assert effect_size_label(0.4) == "moderate-to-large"
+    assert effect_size_label(0.7) == "large"

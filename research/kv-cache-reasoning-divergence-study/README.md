@@ -59,7 +59,7 @@ factor — see §5–6 of the report.
 ```
 data/
 ├── traces/        11 raw generation traces (model × quant), from scripts/01_generate_traces.py
-├── fdps/          10 First-Divergence-Point records, from scripts/02_find_fdps.py
+├── fdps/          8 First-Divergence-Point records, from scripts/02_find_fdps.py
 ├── judgments/     8 Claude-judge classifications (category A-F), from scripts/03_judge_fdps.py
 ├── report.md/json Phase-4 global aggregate (chi-square, Cramér's V), from scripts/04_analyze.py
 └── run_all_failures.log   operational log from the run_all.sh orchestrator
@@ -81,6 +81,40 @@ Qwen3-1.7B and DeepSeek-7B were never collected (documented in
 the eager-attention workaround was too slow to afford within budget for those
 two cells). This is the same gap the repo-root pipeline's
 `scripts/verify_run.py` is built to detect.
+
+**Data-integrity note (found and fixed during the reproducibility pass
+below):** `data/fdps/` originally also contained `qwen3-1.7b_hqq_int2.jsonl`
+and `qwen3-1.7b_hqq_int4.jsonl` — byte-identical copies of
+`qwen3-1.7b_fp8_e4m3.jsonl` mislabeled under the wrong filename (their
+internal `quant_method` field even still said `"fp8_e4m3"`). Both files were
+removed; they were never real HQQ data, just a leftover copy-paste artifact
+from whoever assembled this backup, and their presence directly contradicted
+`paper/limitations.md`'s own "never collected" claim.
+
+## Reproducing `paper/` and `tables/`
+
+Phases 1-4 reproduce `data/`. **Phase 5** (`scripts/05_paper_analysis.py` at
+the repo root) reproduces the tables and figures in `paper/` and `tables/` —
+`accuracy_bars.png`, `divergence_position.png/.md`, `fdp_rate.md`,
+`finish_reason.md`, `judge_confidence.md`, `per_model_chi2.md/.csv`,
+`quant_only_deepdives.md`, `token_efficiency.md`. That script (and the
+`kvtrace.analysis.paper`/`paper_report` modules behind it) did not exist
+anywhere in the source material this repo was consolidated from — only
+these output files survived — so it was rewritten from scratch by reverse-
+engineering the exact formulas from these checked-in ground-truth files
+(e.g. the per-model χ² table's `dof` turned out to use the scipy-natural
+degrees of freedom on the zero-column-dropped matrix, not the nominal
+`(rows-1)*(cols-1)` the Phase-4 global report uses).
+
+`tests/test_paper_analysis.py` and `tests/test_paper_report.py` at the repo
+root verify every recomputed number against these exact files (accuracy
+percentages, χ²/dof/Cramér's V, standardized residuals, FDP rates,
+`finish_reason` distributions, etc.) — run
+`python scripts/05_paper_analysis.py --traces_dir research/kv-cache-reasoning-divergence-study/data/traces --fdps_dir research/kv-cache-reasoning-divergence-study/data/fdps --judgments_dir research/kv-cache-reasoning-divergence-study/data/judgments --out_dir /tmp/phase5_check`
+to regenerate them yourself and diff against this directory. Row order in
+the regenerated tables is alphabetical rather than matching the original
+(lost) script's byte-for-byte order — only the values were verified, not
+row order or the hand-written prose paragraphs.
 
 ## `mechanistic-analysis/`
 

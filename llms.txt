@@ -35,9 +35,39 @@ work. Read `README.md` first, then `research/README.md`.
 
 ## Known gaps (don't assume these exist without checking)
 
-- **`scripts/05_paper_analysis.py` does not exist.** `supervisor_report.md` references it as the script that generated `research/.../paper/*.png` and `research/.../tables/*.md` (accuracy_bars, per_model_chi2, quant_only_deepdives, divergence_position, token_efficiency, finish_reason, judge_confidence, fdp_rate — 8 reports total). Only its outputs survived; the script itself must be written from scratch against those artifact names/schemas if reproducibility is needed.
 - **HQQ coverage is partial by design**: `qwen3-1.7b × {hqq_int4,hqq_int2}` and `deepseek-r1-distill-qwen-7b × {hqq_int4,hqq_int2}` were never generated (transformers ≥4.55 regression broke HQQ + eager-attention path was too slow within budget). This is documented, not a bug to fix silently.
-- `quanrization/_redundant_safe_to_delete/` at repo root holds confirmed-duplicate data set aside during a cleanup pass — safe to `rm -rf`, not yet done by the user as of this writing.
+- **`research/kv-cache-reasoning-divergence-study/mechanistic-analysis/`** (attention-shift KL, layer ablation, failure-prediction models) has no recovered generating code — only output artifacts survived. Unlike `paper/`/`tables/` (see below), this one has not been reconstructed.
+- `quanrization/_redundant_safe_to_delete/` and now-empty `quanrization/nir/` at repo root hold confirmed-duplicate/emptied data set aside during a cleanup pass — safe to `rm -rf quanrization`, not yet done by the user as of this writing.
+
+## Phase 5 (recovered)
+
+`scripts/05_paper_analysis.py` + `src/kvtrace/analysis/{paper,paper_report}.py`
+did not exist anywhere in the source material — only their output files
+(`research/.../paper/*.png`, `research/.../tables/*.md`) survived. They were
+rewritten from scratch by reverse-engineering the exact formulas from those
+checked-in files and verified via `tests/test_paper_analysis.py` /
+`tests/test_paper_report.py` (byte-value regression tests against the real
+ground truth, not synthetic fixtures). Notably: the per-model χ² table's
+`dof` uses the scipy-natural degrees of freedom on the zero-column-dropped
+matrix — different from `chi_square_test()`'s nominal `(rows-1)*(cols-1)`
+used by the Phase-4 global `report.md`. While reconstructing this, two
+corrupted files were found and removed:
+`data/fdps/qwen3-1.7b_hqq_int{2,4}.jsonl` were byte-identical copies of
+`qwen3-1.7b_fp8_e4m3.jsonl` mislabeled under the wrong filename (contradicted
+the documented "HQQ for Qwen3 never collected" claim above).
+
+## Dev environment note
+
+This repo was developed on Windows; there is no usable Python on the base
+Windows install (only the WindowsApps store stub). A working Python 3.11
+lives in WSL Ubuntu's `~/miniforge3/envs/ds` conda env (has numpy/scipy/
+matplotlib/pyyaml/torch/transformers/datasets/pydantic/pytest already, CPU
+only, no GPU on this machine) — invoke it as
+`wsl -e bash -lc "cd /mnt/c/... && PYTHONPATH=src ~/miniforge3/envs/ds/bin/python -m pytest ..."`
+from PowerShell. GPU-only code paths (vLLM, real model generation) can be
+written and reasoned about but not executed here — CPU-only phases (4, 5,
+and most unit tests) can be fully run and verified; GPU phases (1, live
+judge calls in 3) should at most be import/syntax-checked, not run.
 
 ## Conventions
 

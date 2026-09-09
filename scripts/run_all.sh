@@ -86,8 +86,12 @@ echo "=== Phase 4: analyze ==="
 python scripts/04_analyze.py \
   || echo "[run_all] FAILED phase4" | tee -a "$FAIL_LOG"
 
+echo "=== Phase 5: paper analysis ==="
+python scripts/05_paper_analysis.py \
+  || echo "[run_all] FAILED phase5" | tee -a "$FAIL_LOG"
+
 if [[ -s "$FAIL_LOG" ]]; then
   echo "[run_all] done with failures. See $FAIL_LOG and outputs/report.md"
   exit 0  # not a hard failure: the partial output is still useful
 fi
-echo "[run_all] done. See outputs/report.md"
+echo "[run_all] done. See outputs/report.md and outputs/paper/"

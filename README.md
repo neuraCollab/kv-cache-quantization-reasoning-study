@@ -12,7 +12,7 @@ they degrade accuracy. Output is a markdown + JSON report with failure
 
 ## What it does
 
-Four idempotent phases:
+Five idempotent phases:
 
 1. **GENERATE** — run each of 3 models × 5 KV-cache configurations × 80
    math problems (30 AIME-24 + 50 MATH-500) through its own generator
@@ -28,6 +28,13 @@ Four idempotent phases:
 4. **ANALYZE** — build a confusion matrix (method × category), run a
    chi-square independence test and Cramér's V, and emit a deterministic
    markdown + JSON report plus heatmap plots.
+5. **PAPER ANALYSIS** (post-hoc, CPU-only) — per-model chi-square/Cramér's V
+   breakdowns, accuracy-by-model plots, divergence-position histograms,
+   token-efficiency and `finish_reason` tables, judge-confidence validation,
+   and `quant_only` case deep-dives — the tables and figures behind
+   [`research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
+   Verified to reproduce that report's numbers exactly from the checked-in
+   Phase 1-3 data (see `tests/test_paper_analysis.py`).
 
 Each phase is resumable from HuggingFace Hub snapshots, so a Vast.ai
 instance death in the middle of the run is cheap to recover from.
@@ -125,6 +132,9 @@ python scripts/03_judge_fdps.py
 
 # Phase 4 — CPU only, <1 min
 python scripts/04_analyze.py
+
+# Phase 5 — CPU only, no GPU/network; post-hoc tables + plots for the paper
+python scripts/05_paper_analysis.py
 ```
 
 ## Testing
