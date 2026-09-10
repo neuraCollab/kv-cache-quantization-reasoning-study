@@ -28,3 +28,7 @@ models/
 
 # Local agent worktrees
 .worktrees/
+
+# webapp/ (Node)
+webapp/node_modules/
+webapp/dist/
