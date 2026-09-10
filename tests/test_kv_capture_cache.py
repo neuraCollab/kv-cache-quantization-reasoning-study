@@ -38,11 +38,16 @@ def test_fake_quant_cache_e4m3_introduces_bounded_rounding_error():
     assert rel_err < 0.2
 
 
-def test_fake_quant_cache_e4m3_saturates_out_of_range_to_nan():
+def test_fake_quant_cache_handles_out_of_range_values():
+    # e4m3fn's max finite magnitude is ~448; torch versions differ on how
+    # they handle values beyond that on cast (saturate to the max, or
+    # produce NaN) — both are legitimate float8 overflow behaviors, so
+    # assert the invariant that actually matters to us (the value cannot
+    # come out unchanged/still huge), not a specific torch version's choice.
     cache = FakeQuantCache(variant="fp8_e4m3")
     k = torch.tensor([[[[1000.0]]]])  # beyond e4m3fn's ~448 max
     out_k, _ = cache.update(k, k.clone(), layer_idx=0)
-    assert torch.isnan(out_k).all()
+    assert torch.isnan(out_k).all() or (out_k.abs() <= 448.0).all()
 
 
 def test_fake_quant_cache_appends_across_generation_steps():
