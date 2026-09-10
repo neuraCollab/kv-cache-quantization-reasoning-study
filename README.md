@@ -224,9 +224,12 @@ The completed study — the actual traces, FDP records, judge classifications,
 compiled report, and a deeper mechanistic-analysis pass (attention shift,
 layer ablation, failure prediction) — lives in
 [`research/kv-cache-reasoning-divergence-study/`](research/kv-cache-reasoning-divergence-study/).
-Start with its
-[`paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md)
-for the full write-up. `research/` also holds an earlier prototype, a general
+Start with
+[`RESULTS.md`](research/kv-cache-reasoning-divergence-study/RESULTS.md) —
+findings ranked by novelty/significance, each with a verified reproduction
+command (or an explicit note that it needs a GPU this repo doesn't have) —
+or [`paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md)
+for the full original write-up. `research/` also holds an earlier prototype, a general
 (non-reasoning) quantization benchmark, and the theoretical background work —
 see [`research/README.md`](research/README.md) for the full index.
 

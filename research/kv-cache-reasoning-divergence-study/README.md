@@ -6,6 +6,10 @@ how KV-cache quantization (FP8 E4M3/E5M2, HQQ INT4/INT2) affects chain-of-though
 reasoning in DeepSeek-R1-Distill-Qwen-1.5B/7B and Qwen3-1.7B, on 80 problems
 (30 AIME-24 + 50 MATH-500).
 
+**→ [`RESULTS.md`](RESULTS.md)** — the findings ranked by novelty/significance,
+each with a verified reproduction command (or an explicit note that it needs
+a GPU this repo doesn't have). Start there for "what did this actually find."
+
 ## Суть эксперимента
 
 Исследовалось, как различные методы сжатия KV-кэша (FP8, HQQ INT4 и INT2)
