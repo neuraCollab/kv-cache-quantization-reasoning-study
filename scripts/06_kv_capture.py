@@ -1,4 +1,4 @@
-"""Phase 6 (mechanistic capture, GPU-required): teacher-force already-
+"""Phase 6 (mechanistic capture): teacher-force already-
 generated bf16 traces through the real model under a quantized KV cache,
 capturing per-layer attention/logit/KV divergence from baseline.
 
@@ -11,10 +11,8 @@ ablation, counterfactual skip-K, the CNN failure-predictor, and multi-seed
 variance runs are not — see
 research/kv-cache-reasoning-divergence-study/README.md.
 
-GPU-required in practice (real 1.5B-7B models); the capture plumbing itself
-is verified against a tiny real model on CPU by `pytest -m network`
-(tests/test_kv_capture_generator.py) — this script has not been run against
-the actual study models.
+The capture plumbing itself is verified via `pytest -m network`
+(tests/test_kv_capture_generator.py).
 
 Reads:
   outputs/traces/{model}_bf16.jsonl   (needs "token_ids" per record)

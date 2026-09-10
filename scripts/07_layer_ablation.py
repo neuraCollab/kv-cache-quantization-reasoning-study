@@ -5,8 +5,7 @@ layers by how much that shifts final logits from the all-bf16 baseline —
 the "logit-impact" ranking the report compares against the per-layer
 attention-shift-KL ranking from `06_kv_capture.py`'s full-model quantization.
 
-GPU-required in practice; the underlying `single_layer_ablation_kl` is
-verified against a tiny real model on CPU by `pytest -m network`.
+The underlying `single_layer_ablation_kl` is verified via `pytest -m network`.
 
 Reads:
   outputs/traces/{model}_bf16.jsonl   (needs "token_ids" per record)

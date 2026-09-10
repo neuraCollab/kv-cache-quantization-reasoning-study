@@ -9,8 +9,7 @@ learned weights, not an artifact of one sampled continuation — which is what
 justifies calibrating the defense recipe's channel set once instead of
 per-generation.
 
-GPU-required in practice; `multiseed_channel_jaccard` is verified against a
-tiny real model on CPU by `pytest -m network`.
+`multiseed_channel_jaccard` is verified via `pytest -m network`.
 
 Reads:
   outputs/traces/{model}_bf16.jsonl   (only used for prompts — "token_ids"

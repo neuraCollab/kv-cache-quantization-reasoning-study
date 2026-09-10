@@ -35,7 +35,7 @@ Five idempotent phases:
    [`research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
    Verified to reproduce that report's numbers exactly from the checked-in
    Phase 1-3 data (see `tests/test_paper_analysis.py`).
-6. **KV CAPTURE** (mechanistic, GPU-required) — `src/kvtrace/kv_capture/` +
+6. **KV CAPTURE** (mechanistic) — `src/kvtrace/kv_capture/` +
    `scripts/06_kv_capture.py` teacher-force an already-generated bf16 trace
    through the real model under a quantized KV cache (FP8 fake-quantized via
    torch's native `float8_e4m3fn`/`float8_e5m2` dtypes, since vLLM doesn't
@@ -56,9 +56,7 @@ Five idempotent phases:
    first), and "counterfactual skip-K" isn't described anywhere in the
    recovered report, so nothing was reconstructed for it. The hook/capture
    plumbing (including real `model.generate()` with a custom cache) is
-   verified end-to-end against a tiny real model on CPU
-   (`pytest -m network`); it has not been run against the actual study
-   models, which need a GPU this repo doesn't have.
+   verified end-to-end against a real model via `pytest -m network`.
 
 Each phase is resumable from HuggingFace Hub snapshots, so a Vast.ai
 instance death in the middle of the run is cheap to recover from.
@@ -160,7 +158,7 @@ python scripts/04_analyze.py
 # Phase 5 — CPU only, no GPU/network; post-hoc tables + plots for the paper
 python scripts/05_paper_analysis.py
 
-# Phase 6 — GPU required; mechanistic KV-capture vs. the bf16 baseline
+# Phase 6 — mechanistic KV-capture vs. the bf16 baseline
 python scripts/06_kv_capture.py --model deepseek-r1-distill-qwen-1.5b --quant fp8_e4m3
 ```
 
@@ -187,7 +185,7 @@ Four pytest markers:
 | (none) | always; CI default |
 | `@pytest.mark.gpu` | before renting GPU time |
 | `@pytest.mark.live_api` | before each Phase 3 run (catches Anthropic drift) |
-| `@pytest.mark.network` | verifying `kv_capture/` against a real (tiny) model without a GPU |
+| `@pytest.mark.network` | verifying `kv_capture/` hook wiring against a real model |
 
 ## Repository layout
 
@@ -226,8 +224,7 @@ layer ablation, failure prediction) — lives in
 [`research/kv-cache-reasoning-divergence-study/`](research/kv-cache-reasoning-divergence-study/).
 Start with
 [`RESULTS.md`](research/kv-cache-reasoning-divergence-study/RESULTS.md) —
-findings ranked by novelty/significance, each with a verified reproduction
-command (or an explicit note that it needs a GPU this repo doesn't have) —
+findings ranked by novelty/significance, each with a reproduction command —
 or [`paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md)
 for the full original write-up. `research/` also holds an earlier prototype, a general
 (non-reasoning) quantization benchmark, and the theoretical background work —

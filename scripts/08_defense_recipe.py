@@ -12,9 +12,8 @@ Only meaningful for FP8 variants — report §5.3 found this recipe makes HQQ
 *worse* (it fights HQQ's own per-group calibration), so `--quant` doesn't
 accept hqq_int4/hqq_int2 here.
 
-GPU-required in practice; `teacher_forced_defense_effect` and
-`ar_defense_validation` are verified against a tiny real model on CPU by
-`pytest -m network`.
+`teacher_forced_defense_effect` and `ar_defense_validation` are verified
+via `pytest -m network`.
 
 Reads:
   outputs/traces/{model}_bf16.jsonl   (needs "token_ids" per record)

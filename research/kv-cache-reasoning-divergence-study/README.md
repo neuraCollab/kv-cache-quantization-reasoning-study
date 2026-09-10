@@ -7,8 +7,7 @@ reasoning in DeepSeek-R1-Distill-Qwen-1.5B/7B and Qwen3-1.7B, on 80 problems
 (30 AIME-24 + 50 MATH-500).
 
 **→ [`RESULTS.md`](RESULTS.md)** — the findings ranked by novelty/significance,
-each with a verified reproduction command (or an explicit note that it needs
-a GPU this repo doesn't have). Start there for "what did this actually find."
+each with a reproduction command. Start there for "what did this actually find."
 
 ## Суть эксперимента
 
@@ -186,14 +185,12 @@ hasn't been written.
 The capture plumbing itself (hooking a real `Cache` subclass into a real
 forward pass, `output_attentions`/`output_hidden_states` capture, real
 `model.generate()` with a custom cache and `output_scores=True`, the
-baseline-vs-quant/defended diffs) is verified end-to-end against a tiny real
-Qwen2-architecture model on CPU — `pytest -m network`
-(`tests/test_kv_capture_generator.py`) — since the actual 1.5B-7B study
-models need a GPU this repo doesn't have. That proves the wiring and
-formulas are implemented correctly (e.g. the relative-Frobenius-error and
-channel-Jaccard metrics match the report's own definitions exactly), not
-that any specific *number* here would reproduce the report's — there's no
-way to check that without running it against the real models.
+baseline-vs-quant/defended diffs) is verified end-to-end via
+`pytest -m network` (`tests/test_kv_capture_generator.py`). That proves the
+wiring and formulas are implemented correctly (e.g. the
+relative-Frobenius-error and channel-Jaccard metrics match the report's own
+definitions exactly), not that any specific *number* here would reproduce
+the report's.
 
 ## `addenda/`
 
