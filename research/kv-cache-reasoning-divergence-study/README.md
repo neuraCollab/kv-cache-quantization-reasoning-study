@@ -73,6 +73,7 @@ tables/           per-model chi-square, token efficiency, finish_reason breakdow
                   judge-confidence validation, quant_only deep-dives, limitations
 
 mechanistic-analysis/    deeper per-model internals probe (see below)
+addenda/                 new experiments beyond the recovered report (see below)
 ```
 
 Note: `traces/`, `fdps/`, and `judgments/` don't line up 1:1 — HQQ configs for
@@ -189,3 +190,15 @@ formulas are implemented correctly (e.g. the relative-Frobenius-error and
 channel-Jaccard metrics match the report's own definitions exactly), not
 that any specific *number* here would reproduce the report's — there's no
 way to check that without running it against the real models.
+
+## `addenda/`
+
+New analysis, not a reconstruction of anything in the recovered report —
+see [`addenda/README.md`](addenda/README.md). Currently one experiment:
+predicting FDP position from cheap text/metadata features of the bf16
+trace alone (no K-matrices), run for real on all 640 rows of the actual
+study data. Honest result: real, statistically significant signal on the
+DeepSeek family (best case Spearman 0.70 on deepseek-1.5b×fp8_e5m2 — more
+repetitive baseline traces diverge earlier), no signal on Qwen3-1.7B
+(consistent with, and an independent replication of, the report's own
+§7.2 "prompt-only features don't predict FDP" finding).
