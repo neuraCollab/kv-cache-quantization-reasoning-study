@@ -1,5 +1,10 @@
 # KV-Cache Quantization × Reasoning Trace Stability
 
+<h2 align="center">
+  <a href="https://neuracollab.github.io/kv-cache-quantization-reasoning-study/">🔎 OPEN THE INTERACTIVE DASHBOARD →</a>
+</h2>
+<p align="center"><sub>Trace inspector, contingency-matrix/χ² view, failure-signature browser — illustrative example traces, not a dump of the raw study data. Real findings and numbers are below.</sub></p>
+
 What actually breaks when an LLM's KV-cache gets quantized — not just how
 much accuracy drops, but *where* the reasoning chain snaps, *why* at the
 tensor level, and whether the obvious defense survives contact with real
