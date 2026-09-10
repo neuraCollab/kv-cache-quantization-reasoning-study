@@ -75,12 +75,3 @@
 материал. Подробности — в его собственном
 [README](supporting-materials/README.md).
 
-## `quanrization/_redundant_safe_to_delete/`
-
-Рядом с `research/` (на уровень выше) остаётся
-`quanrization/_redundant_safe_to_delete/` — подтверждённо дублирующиеся
-данные, отложенные при чистке вместо немедленного удаления. Удалить можно:
-
-```bash
-rm -rf quanrization
-```
