@@ -1,0 +1,18 @@
+{
+    "FP16 (Baseline)": {
+        "vram": 8906.3,
+        "tps": 1.68
+    },
+    "LLM.int8()": {
+        "vram": 14397.52,
+        "tps": 2.27
+    },
+    "ZeroQuant (NF4)": {
+        "vram": 7008.61,
+        "tps": 21.46
+    },
+    "NF4 + Double Quant": {
+        "vram": 9801.44,
+        "tps": 18.22
+    }
+}

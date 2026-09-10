@@ -1,0 +1,814 @@
+{
+  "quant": "fp8_e4m3",
+  "n_problems": 20,
+  "skip_configs": {
+    "0": [],
+    "1": [
+      3
+    ],
+    "3": [
+      3,
+      15,
+      0
+    ],
+    "5": [
+      3,
+      15,
+      0,
+      5,
+      9
+    ],
+    "10": [
+      3,
+      15,
+      0,
+      5,
+      9,
+      7,
+      1,
+      8,
+      16,
+      11
+    ]
+  },
+  "per_K": {
+    "0": {
+      "K": 0,
+      "skip_layers": [],
+      "n": 20,
+      "mean_kl_mean": 0.007573688460979611,
+      "mean_kl_at_fdp": 0.004504015029007833,
+      "mean_argmax_match": 0.976776197552681,
+      "argmax_at_fdp_match_rate": 1.0,
+      "per_problem": [
+        {
+          "problem_id": 0,
+          "kl_mean": 0.003864107420668006,
+          "kl_at_fdp": 5.105247335990271e-10,
+          "argmax_match_rate": 0.9960159659385681,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 1,
+          "kl_mean": 0.00624170433729887,
+          "kl_at_fdp": 0.0006075578276067972,
+          "argmax_match_rate": 0.9641434550285339,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 2,
+          "kl_mean": 0.015193374827504158,
+          "kl_at_fdp": 6.303701866272604e-06,
+          "argmax_match_rate": 0.9561753273010254,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 3,
+          "kl_mean": 0.008551782928407192,
+          "kl_at_fdp": 0.021274125203490257,
+          "argmax_match_rate": 0.9871794581413269,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 4,
+          "kl_mean": 0.008988249115645885,
+          "kl_at_fdp": 0.0035857802722603083,
+          "argmax_match_rate": 0.9641434550285339,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 5,
+          "kl_mean": 0.007945692166686058,
+          "kl_at_fdp": 0.0038270908407866955,
+          "argmax_match_rate": 0.9826086759567261,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 6,
+          "kl_mean": 0.007958059199154377,
+          "kl_at_fdp": 0.004305961541831493,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 7,
+          "kl_mean": 0.005909993778914213,
+          "kl_at_fdp": 1.8305057122858237e-11,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 8,
+          "kl_mean": 0.008218394592404366,
+          "kl_at_fdp": 4.114085186301963e-06,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 9,
+          "kl_mean": 0.009160146117210388,
+          "kl_at_fdp": 0.03452510014176369,
+          "argmax_match_rate": 0.9561753273010254,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 10,
+          "kl_mean": 0.004788478836417198,
+          "kl_at_fdp": 1.0188762722407319e-08,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 11,
+          "kl_mean": 0.004837337415665388,
+          "kl_at_fdp": 6.083625407882209e-07,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 12,
+          "kl_mean": 0.0034220521338284016,
+          "kl_at_fdp": 2.7192266216502503e-09,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 13,
+          "kl_mean": 0.009241168387234211,
+          "kl_at_fdp": 3.0905814019099864e-10,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 14,
+          "kl_mean": 0.009661911986768246,
+          "kl_at_fdp": 1.3999178918311372e-05,
+          "argmax_match_rate": 0.9641434550285339,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 15,
+          "kl_mean": 0.004184738267213106,
+          "kl_at_fdp": 0.0006308488082140684,
+          "argmax_match_rate": 1.0,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 16,
+          "kl_mean": 0.006582967471331358,
+          "kl_at_fdp": 0.0066277338191866875,
+          "argmax_match_rate": 0.9919354915618896,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 17,
+          "kl_mean": 0.008901934139430523,
+          "kl_at_fdp": 0.008629590272903442,
+          "argmax_match_rate": 0.9641434550285339,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 18,
+          "kl_mean": 0.012292887084186077,
+          "kl_at_fdp": 0.0011007804423570633,
+          "argmax_match_rate": 0.9601593613624573,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 19,
+          "kl_mean": 0.005528789013624191,
+          "kl_at_fdp": 0.004940692335367203,
+          "argmax_match_rate": 0.976190447807312,
+          "argmax_at_fdp_match": 1
+        }
+      ]
+    },
+    "1": {
+      "K": 1,
+      "skip_layers": [
+        3
+      ],
+      "n": 20,
+      "mean_kl_mean": 0.00689317227806896,
+      "mean_kl_at_fdp": 0.003953438021640736,
+      "mean_argmax_match": 0.9780160665512085,
+      "argmax_at_fdp_match_rate": 0.95,
+      "per_problem": [
+        {
+          "problem_id": 0,
+          "kl_mean": 0.0032570031471550465,
+          "kl_at_fdp": 4.793436203520685e-10,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 1,
+          "kl_mean": 0.006036827806383371,
+          "kl_at_fdp": 0.0011149852070957422,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 2,
+          "kl_mean": 0.006924270186573267,
+          "kl_at_fdp": 3.419698032303131e-06,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 3,
+          "kl_mean": 0.007333244197070599,
+          "kl_at_fdp": 0.02591661736369133,
+          "argmax_match_rate": 0.9871794581413269,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 4,
+          "kl_mean": 0.009122400544583797,
+          "kl_at_fdp": 0.0025482685305178165,
+          "argmax_match_rate": 0.9681274890899658,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 5,
+          "kl_mean": 0.007031301502138376,
+          "kl_at_fdp": 0.006166114937514067,
+          "argmax_match_rate": 0.9826086759567261,
+          "argmax_at_fdp_match": 0
+        },
+        {
+          "problem_id": 6,
+          "kl_mean": 0.007032779045403004,
+          "kl_at_fdp": 0.0033969255164265633,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 7,
+          "kl_mean": 0.005424303002655506,
+          "kl_at_fdp": 1.7120064046971528e-11,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 8,
+          "kl_mean": 0.00548703595995903,
+          "kl_at_fdp": 1.0105494766321499e-05,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 9,
+          "kl_mean": 0.008304868824779987,
+          "kl_at_fdp": 0.009367999620735645,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 10,
+          "kl_mean": 0.004432528745383024,
+          "kl_at_fdp": 5.238749878344606e-09,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 11,
+          "kl_mean": 0.0044618635438382626,
+          "kl_at_fdp": 4.898965926258825e-06,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 12,
+          "kl_mean": 0.003615453839302063,
+          "kl_at_fdp": -5.06178467196694e-11,
+          "argmax_match_rate": 0.9960159659385681,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 13,
+          "kl_mean": 0.014234384521842003,
+          "kl_at_fdp": -9.214490281905796e-11,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 14,
+          "kl_mean": 0.007546690292656422,
+          "kl_at_fdp": 3.959238893003203e-05,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 15,
+          "kl_mean": 0.005363871809095144,
+          "kl_at_fdp": 0.002409539418295026,
+          "argmax_match_rate": 0.9729729890823364,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 16,
+          "kl_mean": 0.00613305764272809,
+          "kl_at_fdp": 0.01192255225032568,
+          "argmax_match_rate": 0.9919354915618896,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 17,
+          "kl_mean": 0.008600887842476368,
+          "kl_at_fdp": 0.0038537289947271347,
+          "argmax_match_rate": 0.9681274890899658,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 18,
+          "kl_mean": 0.011129247024655342,
+          "kl_at_fdp": 0.0010608357843011618,
+          "argmax_match_rate": 0.9521912336349487,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 19,
+          "kl_mean": 0.006391426082700491,
+          "kl_at_fdp": 0.011253170669078827,
+          "argmax_match_rate": 0.9682539701461792,
+          "argmax_at_fdp_match": 1
+        }
+      ]
+    },
+    "3": {
+      "K": 3,
+      "skip_layers": [
+        3,
+        15,
+        0
+      ],
+      "n": 20,
+      "mean_kl_mean": 0.006549457483924925,
+      "mean_kl_at_fdp": 0.0026972519998248175,
+      "mean_argmax_match": 0.9804066061973572,
+      "argmax_at_fdp_match_rate": 0.95,
+      "per_problem": [
+        {
+          "problem_id": 0,
+          "kl_mean": 0.004228429403156042,
+          "kl_at_fdp": 4.293885524919716e-10,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 1,
+          "kl_mean": 0.004765046760439873,
+          "kl_at_fdp": 0.00030597776640206575,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 2,
+          "kl_mean": 0.00685227382928133,
+          "kl_at_fdp": 6.306929208221845e-06,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 3,
+          "kl_mean": 0.007264609448611736,
+          "kl_at_fdp": 0.01702941209077835,
+          "argmax_match_rate": 0.9807692170143127,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 4,
+          "kl_mean": 0.0075372448191046715,
+          "kl_at_fdp": 0.00564791401848197,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 5,
+          "kl_mean": 0.009803855791687965,
+          "kl_at_fdp": 0.007994310930371284,
+          "argmax_match_rate": 0.9739130139350891,
+          "argmax_at_fdp_match": 0
+        },
+        {
+          "problem_id": 6,
+          "kl_mean": 0.005756339058279991,
+          "kl_at_fdp": 0.0030584288761019707,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 7,
+          "kl_mean": 0.004629954230040312,
+          "kl_at_fdp": 1.4241352888633152e-11,
+          "argmax_match_rate": 0.9960159659385681,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 8,
+          "kl_mean": 0.004640656989067793,
+          "kl_at_fdp": 1.0105424735229462e-05,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 9,
+          "kl_mean": 0.006384109612554312,
+          "kl_at_fdp": 0.008269825018942356,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 10,
+          "kl_mean": 0.004580032080411911,
+          "kl_at_fdp": 3.4733791398622316e-09,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 11,
+          "kl_mean": 0.005200655665248632,
+          "kl_at_fdp": 2.7528346890903777e-06,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 12,
+          "kl_mean": 0.003982563503086567,
+          "kl_at_fdp": -2.8710405164389385e-09,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 13,
+          "kl_mean": 0.006837706081569195,
+          "kl_at_fdp": -2.8019853104410686e-09,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 14,
+          "kl_mean": 0.008874704129993916,
+          "kl_at_fdp": 0.0002028017188422382,
+          "argmax_match_rate": 0.9681274890899658,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 15,
+          "kl_mean": 0.005352588836103678,
+          "kl_at_fdp": 0.0023551499471068382,
+          "argmax_match_rate": 1.0,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 16,
+          "kl_mean": 0.007324698381125927,
+          "kl_at_fdp": 0.0034217846114188433,
+          "argmax_match_rate": 1.0,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 17,
+          "kl_mean": 0.005678020417690277,
+          "kl_at_fdp": 0.0013810591772198677,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 18,
+          "kl_mean": 0.014748900197446346,
+          "kl_at_fdp": 0.002228240016847849,
+          "argmax_match_rate": 0.9442231059074402,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 19,
+          "kl_mean": 0.006546760443598032,
+          "kl_at_fdp": 0.0020309723913669586,
+          "argmax_match_rate": 0.9841269850730896,
+          "argmax_at_fdp_match": 1
+        }
+      ]
+    },
+    "5": {
+      "K": 5,
+      "skip_layers": [
+        3,
+        15,
+        0,
+        5,
+        9
+      ],
+      "n": 20,
+      "mean_kl_mean": 0.00588908176869154,
+      "mean_kl_at_fdp": 0.0028754423875921144,
+      "mean_argmax_match": 0.9825151324272156,
+      "argmax_at_fdp_match_rate": 0.95,
+      "per_problem": [
+        {
+          "problem_id": 0,
+          "kl_mean": 0.0029325212817639112,
+          "kl_at_fdp": 4.1955861007636486e-10,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 1,
+          "kl_mean": 0.004501815419644117,
+          "kl_at_fdp": 0.001117619569413364,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 2,
+          "kl_mean": 0.007694369647651911,
+          "kl_at_fdp": 1.2829887054977007e-06,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 3,
+          "kl_mean": 0.007197404745966196,
+          "kl_at_fdp": 0.024698477238416672,
+          "argmax_match_rate": 0.9871794581413269,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 4,
+          "kl_mean": 0.005485730245709419,
+          "kl_at_fdp": 0.005209847819060087,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 5,
+          "kl_mean": 0.009003580547869205,
+          "kl_at_fdp": 0.005259636789560318,
+          "argmax_match_rate": 0.9739130139350891,
+          "argmax_at_fdp_match": 0
+        },
+        {
+          "problem_id": 6,
+          "kl_mean": 0.005325548816472292,
+          "kl_at_fdp": 0.0025391734670847654,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 7,
+          "kl_mean": 0.0049367183819413185,
+          "kl_at_fdp": 1.7821629588743448e-11,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 8,
+          "kl_mean": 0.006027257069945335,
+          "kl_at_fdp": 1.0105394721904304e-05,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 9,
+          "kl_mean": 0.00703776441514492,
+          "kl_at_fdp": 0.006277682725340128,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 10,
+          "kl_mean": 0.0035603134892880917,
+          "kl_at_fdp": 9.899075337216345e-09,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 11,
+          "kl_mean": 0.0037658594083040953,
+          "kl_at_fdp": 3.1766660413268255e-06,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 12,
+          "kl_mean": 0.002518601715564728,
+          "kl_at_fdp": 5.489053211960027e-09,
+          "argmax_match_rate": 0.9960159659385681,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 13,
+          "kl_mean": 0.007110749837011099,
+          "kl_at_fdp": -1.2791412373758249e-09,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 14,
+          "kl_mean": 0.006203926168382168,
+          "kl_at_fdp": 7.614916830789298e-05,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 15,
+          "kl_mean": 0.006576157175004482,
+          "kl_at_fdp": 0.000609915645327419,
+          "argmax_match_rate": 1.0,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 16,
+          "kl_mean": 0.006696179509162903,
+          "kl_at_fdp": 0.003715985221788287,
+          "argmax_match_rate": 0.9919354915618896,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 17,
+          "kl_mean": 0.005581990350037813,
+          "kl_at_fdp": 0.002877018414437771,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 18,
+          "kl_mean": 0.00905510876327753,
+          "kl_at_fdp": 0.0015542472247034311,
+          "argmax_match_rate": 0.9561753273010254,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 19,
+          "kl_mean": 0.006570038385689259,
+          "kl_at_fdp": 0.0035585148725658655,
+          "argmax_match_rate": 0.9841269850730896,
+          "argmax_at_fdp_match": 1
+        }
+      ]
+    },
+    "10": {
+      "K": 10,
+      "skip_layers": [
+        3,
+        15,
+        0,
+        5,
+        9,
+        7,
+        1,
+        8,
+        16,
+        11
+      ],
+      "n": 20,
+      "mean_kl_mean": 0.004271661688107997,
+      "mean_kl_at_fdp": 0.004566752402560148,
+      "mean_argmax_match": 0.9825773566961289,
+      "argmax_at_fdp_match_rate": 0.95,
+      "per_problem": [
+        {
+          "problem_id": 0,
+          "kl_mean": 0.0021193039137870073,
+          "kl_at_fdp": -2.031898954646394e-10,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 1,
+          "kl_mean": 0.0027904019225388765,
+          "kl_at_fdp": 7.646667654626071e-06,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 2,
+          "kl_mean": 0.004289187025278807,
+          "kl_at_fdp": 3.302203595012543e-06,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 3,
+          "kl_mean": 0.005352134350687265,
+          "kl_at_fdp": 0.025056403130292892,
+          "argmax_match_rate": 0.9807692170143127,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 4,
+          "kl_mean": 0.0050103249959647655,
+          "kl_at_fdp": 0.0029916150961071253,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 5,
+          "kl_mean": 0.004621073137968779,
+          "kl_at_fdp": 0.006314270198345184,
+          "argmax_match_rate": 0.9826086759567261,
+          "argmax_at_fdp_match": 0
+        },
+        {
+          "problem_id": 6,
+          "kl_mean": 0.003988068550825119,
+          "kl_at_fdp": 0.0013175532221794128,
+          "argmax_match_rate": 0.9840637445449829,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 7,
+          "kl_mean": 0.0029644989408552647,
+          "kl_at_fdp": 1.8332106666019143e-11,
+          "argmax_match_rate": 0.9880478382110596,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 8,
+          "kl_mean": 0.0030137954745441675,
+          "kl_at_fdp": 1.0105473847943358e-05,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 9,
+          "kl_mean": 0.005305327940732241,
+          "kl_at_fdp": 0.02595088817179203,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 10,
+          "kl_mean": 0.0027128171641379595,
+          "kl_at_fdp": 1.933830429123873e-09,
+          "argmax_match_rate": 0.9920318722724915,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 11,
+          "kl_mean": 0.002759509952738881,
+          "kl_at_fdp": 3.836470568785444e-06,
+          "argmax_match_rate": 0.980079710483551,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 12,
+          "kl_mean": 0.0029408687260001898,
+          "kl_at_fdp": -2.8710887001182073e-09,
+          "argmax_match_rate": 0.9960159659385681,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 13,
+          "kl_mean": 0.0077852909453213215,
+          "kl_at_fdp": -1.55677570834456e-09,
+          "argmax_match_rate": 0.9760956168174744,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 14,
+          "kl_mean": 0.0038281285669654608,
+          "kl_at_fdp": 0.00010967074194923043,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 15,
+          "kl_mean": 0.004616357386112213,
+          "kl_at_fdp": 9.507974027656019e-05,
+          "argmax_match_rate": 0.9909909963607788,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 16,
+          "kl_mean": 0.005342152435332537,
+          "kl_at_fdp": 0.003588147694244981,
+          "argmax_match_rate": 0.9919354915618896,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 17,
+          "kl_mean": 0.0055493563413619995,
+          "kl_at_fdp": 0.016521722078323364,
+          "argmax_match_rate": 0.9721115827560425,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 18,
+          "kl_mean": 0.00570708466693759,
+          "kl_at_fdp": 0.004249155521392822,
+          "argmax_match_rate": 0.9561753273010254,
+          "argmax_at_fdp_match": 1
+        },
+        {
+          "problem_id": 19,
+          "kl_mean": 0.0047375513240695,
+          "kl_at_fdp": 0.005115654319524765,
+          "argmax_match_rate": 0.9841269850730896,
+          "argmax_at_fdp_match": 1
+        }
+      ]
+    }
+  }
+}

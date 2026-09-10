@@ -1,0 +1,16 @@
+{
+  "model": "qwen3-1.7b",
+  "model_revision_hash": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "git_commit": "a24aa1e7df262caef46d853fe41f172ce9489451",
+  "quants": [
+    "hqq_int4"
+  ],
+  "modes": [
+    "tf"
+  ],
+  "window_pre": 150,
+  "window_post": 100,
+  "pytorch_version": "2.12.0+cpu",
+  "transformers_version": "4.51.3",
+  "run_timestamp": "2026-05-25T06:22:59.051963Z"
+}

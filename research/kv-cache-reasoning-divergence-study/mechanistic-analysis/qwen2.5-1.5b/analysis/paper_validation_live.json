@@ -1,0 +1,59 @@
+{
+  "n_problems": 5,
+  "n_layers": 28,
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "fresh_indices": [
+    70,
+    71,
+    72,
+    73,
+    74
+  ],
+  "per_quant": {
+    "fp8_e4m3": {
+      "layer_rel_err_mean": 0.02653111049107143,
+      "layer_rel_err_median": 0.026611328125,
+      "layer_rel_err_max": 0.0322265625,
+      "top1_ch_noise_frac_mean": 0.1577958961198256,
+      "top1_ch_noise_frac_median": 0.12840741932518157,
+      "top1_ch_noise_frac_max": 0.6256983240223464,
+      "top10_ch_noise_frac_mean": 0.44737857765192723,
+      "top10_ch_noise_frac_median": 0.3907978527983018,
+      "top10_ch_noise_frac_max": 0.9225806451612903,
+      "defended_rel_err_mean": 0.019860621861049105,
+      "defended_rel_err_median": 0.021240234375,
+      "defended_rel_err_max": 0.0235595703125,
+      "defense_change_pct": -25.142138819508357
+    },
+    "fp8_e5m2": {
+      "layer_rel_err_mean": 0.052924455915178574,
+      "layer_rel_err_median": 0.052734375,
+      "layer_rel_err_max": 0.0654296875,
+      "top1_ch_noise_frac_mean": 0.16657431922604551,
+      "top1_ch_noise_frac_median": 0.13440359309139507,
+      "top1_ch_noise_frac_max": 0.6272727272727273,
+      "top10_ch_noise_frac_mean": 0.45257546412649635,
+      "top10_ch_noise_frac_median": 0.39285714285714285,
+      "top10_ch_noise_frac_max": 0.9346733668341709,
+      "defended_rel_err_mean": 0.0392974853515625,
+      "defended_rel_err_median": 0.0423583984375,
+      "defended_rel_err_max": 0.04638671875,
+      "defense_change_pct": -25.7479653365844
+    },
+    "hqq_int4": {
+      "layer_rel_err_mean": 0.11306849888392857,
+      "layer_rel_err_median": 0.11083984375,
+      "layer_rel_err_max": 0.1923828125,
+      "top1_ch_noise_frac_mean": 0.012586949542195667,
+      "top1_ch_noise_frac_median": 0.00953219302533152,
+      "top1_ch_noise_frac_max": 0.04919678714859438,
+      "top10_ch_noise_frac_mean": 0.1037101861241063,
+      "top10_ch_noise_frac_median": 0.08755259690581435,
+      "top10_ch_noise_frac_max": 0.2710843373493976,
+      "defended_rel_err_mean": 0.11094796316964285,
+      "defended_rel_err_median": 0.10888671875,
+      "defended_rel_err_max": 0.19140625,
+      "defense_change_pct": -1.8754434128134791
+    }
+  }
+}

@@ -1,0 +1,914 @@
+% =====================================================================
+%  Отчёт по исследованию: KV Cache Quantization × Reasoning Trace Stability
+%  Single-file pdflatex source. To compile (from this directory):
+%
+%      pdflatex report.tex
+%      pdflatex report.tex      % run twice for ToC + xrefs
+%
+%  Required figures (must be in the same directory as this file):
+%      accuracy_bars.png
+%      divergence_position.png
+%
+%  Required packages: T2A fontenc, babel-russian, booktabs, graphicx,
+%      hyperref, geometry, amsmath/amssymb, listings, xcolor, caption.
+%
+%  Tested with TeX Live 2023 / MiKTeX 23.x. If hyperref complains about
+%  Russian bookmarks, run with:  pdflatex -shell-escape report.tex
+% =====================================================================
+
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian, english]{babel}
+
+\usepackage{geometry}
+\geometry{margin=2.3cm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[bookmarks=true, colorlinks=true, linkcolor=black,
+            citecolor=black, urlcolor=blue]{hyperref}
+\usepackage{listingsutf8}
+
+% ---- Listings setup for code/trace excerpts ----
+% listingsutf8 + inputencoding=utf8 lets Cyrillic appear inside lstlisting blocks.
+\definecolor{lstbg}{rgb}{0.97, 0.97, 0.97}
+\lstset{
+    basicstyle    = \ttfamily\footnotesize,
+    backgroundcolor = \color{lstbg},
+    breaklines    = true,
+    breakatwhitespace = false,
+    columns       = fullflexible,
+    frame         = single,
+    framesep      = 4pt,
+    framerule     = 0pt,
+    aboveskip     = 6pt,
+    belowskip     = 6pt,
+    showstringspaces = false,
+    keepspaces    = true,
+    extendedchars = true,
+    inputencoding = utf8,
+    literate=
+      {а}{{\selectfont\char224}}1 {б}{{\selectfont\char225}}1
+      {в}{{\selectfont\char226}}1 {г}{{\selectfont\char227}}1
+      {д}{{\selectfont\char228}}1 {е}{{\selectfont\char229}}1
+      {ё}{{\"e}}1                 {ж}{{\selectfont\char230}}1
+      {з}{{\selectfont\char231}}1 {и}{{\selectfont\char232}}1
+      {й}{{\selectfont\char233}}1 {к}{{\selectfont\char234}}1
+      {л}{{\selectfont\char235}}1 {м}{{\selectfont\char236}}1
+      {н}{{\selectfont\char237}}1 {о}{{\selectfont\char238}}1
+      {п}{{\selectfont\char239}}1 {р}{{\selectfont\char240}}1
+      {с}{{\selectfont\char241}}1 {т}{{\selectfont\char242}}1
+      {у}{{\selectfont\char243}}1 {ф}{{\selectfont\char244}}1
+      {х}{{\selectfont\char245}}1 {ц}{{\selectfont\char246}}1
+      {ч}{{\selectfont\char247}}1 {ш}{{\selectfont\char248}}1
+      {щ}{{\selectfont\char249}}1 {ъ}{{\selectfont\char250}}1
+      {ы}{{\selectfont\char251}}1 {ь}{{\selectfont\char252}}1
+      {э}{{\selectfont\char253}}1 {ю}{{\selectfont\char254}}1
+      {я}{{\selectfont\char255}}1
+      {А}{{\selectfont\char192}}1 {Б}{{\selectfont\char193}}1
+      {В}{{\selectfont\char194}}1 {Г}{{\selectfont\char195}}1
+      {Д}{{\selectfont\char196}}1 {Е}{{\selectfont\char197}}1
+      {Ё}{{\"E}}1                 {Ж}{{\selectfont\char198}}1
+      {З}{{\selectfont\char199}}1 {И}{{\selectfont\char200}}1
+      {Й}{{\selectfont\char201}}1 {К}{{\selectfont\char202}}1
+      {Л}{{\selectfont\char203}}1 {М}{{\selectfont\char204}}1
+      {Н}{{\selectfont\char205}}1 {О}{{\selectfont\char206}}1
+      {П}{{\selectfont\char207}}1 {Р}{{\selectfont\char208}}1
+      {С}{{\selectfont\char209}}1 {Т}{{\selectfont\char210}}1
+      {У}{{\selectfont\char211}}1 {Ф}{{\selectfont\char212}}1
+      {Х}{{\selectfont\char213}}1 {Ц}{{\selectfont\char214}}1
+      {Ч}{{\selectfont\char215}}1 {Ш}{{\selectfont\char216}}1
+      {Щ}{{\selectfont\char217}}1 {Ъ}{{\selectfont\char218}}1
+      {Ы}{{\selectfont\char219}}1 {Ь}{{\selectfont\char220}}1
+      {Э}{{\selectfont\char221}}1 {Ю}{{\selectfont\char222}}1
+      {Я}{{\selectfont\char223}}1
+      {—}{{---}}1 {–}{{--}}1 {…}{{\ldots}}1
+      {«}{{<<}}1 {»}{{>>}}1 {„}{{,,}}1 {“}{{``}}1 {”}{{''}}1
+      {≈}{{$\approx$}}1 {≥}{{$\geq$}}1 {≤}{{$\leq$}}1
+      {²}{{$^2$}}1 {×}{{$\times$}}1 {·}{{$\cdot$}}1
+      {→}{{$\to$}}1 {←}{{$\leftarrow$}}1
+      {₀}{{$_0$}}1 {₁}{{$_1$}}1 {₂}{{$_2$}}1
+      {§}{{\S}}1 {¶}{{\P}}1 {°}{{$^{\circ}$}}1
+      {±}{{$\pm$}}1 {÷}{{$\div$}}1
+      {α}{{$\alpha$}}1 {β}{{$\beta$}}1 {γ}{{$\gamma$}}1
+      {δ}{{$\delta$}}1 {ε}{{$\varepsilon$}}1 {θ}{{$\theta$}}1
+      {λ}{{$\lambda$}}1 {μ}{{$\mu$}}1 {π}{{$\pi$}}1
+      {σ}{{$\sigma$}}1 {τ}{{$\tau$}}1 {φ}{{$\varphi$}}1
+      {χ}{{$\chi$}}1 {ψ}{{$\psi$}}1 {ω}{{$\omega$}}1
+      {Δ}{{$\Delta$}}1 {Σ}{{$\Sigma$}}1
+      {∈}{{$\in$}}1 {∉}{{$\notin$}}1 {∞}{{$\infty$}}1
+      {∑}{{$\sum$}}1 {∏}{{$\prod$}}1
+}
+
+% ---- Convenience macros ----
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\fp}{$\mathrm{FP}$}
+\newcommand{\chisq}{$\chi^{2}$}
+
+% =====================================================================
+%  Title
+% =====================================================================
+\title{\textbf{Влияние квантизации KV-кэша на устойчивость цепочек рассуждений у компактных reasoning-моделей} \\[0.3em]
+       \large Отчёт о проделанной работе}
+\author{\textit{Студент:} \ldots \\
+        \textit{Научный руководитель:} \ldots}
+\date{Апрель 2026}
+
+\begin{document}
+\maketitle
+
+% =====================================================================
+%  Abstract
+% =====================================================================
+\begin{abstract}
+\noindent
+Проведено систематическое исследование влияния квантизации KV-кэша
+(хранилища ключей и значений механизма внимания во время инференса)
+на качество цепочек рассуждений у трёх компактных моделей
+(\code{DeepSeek-R1-Distill-Qwen-1.5B/7B}, \code{Qwen3-1.7B}) на $80$
+задачах из AIME-24 и MATH-500. Сравнивались пять схем хранения:
+\code{bfloat16} (baseline), FP8 (E4M3, E5M2) и HQQ (\,4-бит, 2-бит\,).
+Помимо traditional accuracy измерялась \emph{точка первого расхождения}
+(First Divergence Point, FDP) между квантизованной и baseline-трассами,
+с автоматической классификацией сбоя в этой точке шестикатегорийной
+таксономией (Anthropic Claude как судья). Главный результат:
+\textbf{семейство Qwen3 устойчиво к FP8 KV-квантизации} (accuracy
+$53.7\,\%/51.2\,\%$ против $52.5\,\%$ baseline; \chisq{} между двумя
+FP8-схемами $p=0.348$, гипотеза независимости \emph{не отвергается}),
+тогда как \textbf{семейство DeepSeek-R1-Distill полностью коллапсирует}
+($35{-}60\,\% \to 0\,\%$ под всеми протестированными квантизациями) из-за
+доминирования category F (Repetition/loop). Зафиксированы пять случаев
+\code{quant\_only} — задач, где квантизация \emph{улучшает} ответ —
+все на Qwen3-1.7B, что делает FP8 на этой модели \emph{статистически
+взаимозаменяемым} с bf16.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% =====================================================================
+\section{Постановка задачи}
+% =====================================================================
+
+\subsection{Контекст и мотивация}
+
+Современные small reasoning models ($1{-}8\,$B параметров) генерируют
+chain-of-thought длиной в тысячи токенов. KV-кэш — структура,
+содержащая для каждого токена и каждой attention-головы пару тензоров
+ключа и значения — занимает основной объём VRAM при инференсе на
+длинных контекстах. Например, для \code{DeepSeek-R1-Distill-Qwen-7B}
+при генерации $16\,$k токенов KV-кэш занимает $\approx 8{-}12\,$GB.
+
+KV-квантизация (FP8, INT4, INT2) — стандартный приём масштабирования
+длинных reasoning-контекстов под фиксированный VRAM-бюджет. Однако в
+литературе её влияние оценивается \emph{по итоговой accuracy}\,,
+агрегированной по бенчмарку. Этого недостаточно для понимания, \emph{как
+именно} квантизация портит рассуждение: меняется ли стратегия решения,
+ломается арифметика, или модель срывается в петлю?
+
+\subsection{Гипотезы}
+
+\begin{description}[leftmargin=2.6em, style=nextline]
+\item[\textbf{H1 (количественная)}] При понижении точности KV-кэша
+    accuracy деградирует монотонно:
+    $\mathrm{bf16} \geq \mathrm{FP8} \geq \mathrm{HQQ\text{-}INT4} \geq
+    \mathrm{HQQ\text{-}INT2}$.
+\item[\textbf{H2 (качественная)}] Тип сбоя (failure mode) зависит от
+    агрессивности квантизации: FP8 даёт «арифметические» ошибки,
+    HQQ INT2 — «галлюцинации» / срывы стратегии.
+\item[\textbf{H3 (архитектурная)}] Семейства моделей различаются
+    по чувствительности к квантизации KV; влияние не сводится к
+    размеру модели.
+\end{description}
+
+\subsection{Цели работы}
+
+\begin{enumerate}[leftmargin=*]
+\item Разработать инструмент локализации точки расхождения трасс
+(Phase~2) и автоматической классификации сбоев (Phase~3).
+\item Получить статистически защищаемые выводы и составить
+методологические ограничения для дальнейших работ.
+\end{enumerate}
+
+% =====================================================================
+\section{Методология}
+% =====================================================================
+
+\subsection{Модели и квантизации}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Модель} & \textbf{Архитектура} & \textbf{HF-идентификатор} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & Qwen2 + reasoning distillation & \code{deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B} \\
+Qwen3-1.7B              & Qwen3 (новая архитектура)       & \code{Qwen/Qwen3-1.7B} \\
+DS-R1-Distill-Qwen-7B   & Qwen2 + reasoning distillation & \code{deepseek-ai/DeepSeek-R1-Distill-Qwen-7B} \\
+\bottomrule
+\end{tabular}
+\caption{Тестируемые модели.}
+\label{tab:models}
+\end{table}
+
+\noindent Пять конфигураций KV-кэша:
+\begin{itemize}[leftmargin=*]
+\item \code{bf16} — baseline, полная точность ($16$ бит);
+\item \code{fp8\_e4m3} — FP8, $4$ бита экспоненты, $3$ бита мантиссы (узкий диапазон, высокая точность);
+\item \code{fp8\_e5m2} — FP8, $5/2$ (широкий диапазон, ниже точность);
+\item \code{hqq\_int4} — HQQ, $4$-битная квантизация ключей и значений;
+\item \code{hqq\_int2} — HQQ, $2$-битная квантизация (наиболее агрессивная).
+\end{itemize}
+FP8 и bf16 запускаются через \textbf{vLLM 0.7.3}; HQQ — через
+HuggingFace \code{transformers} с \code{QuantizedCacheConfig(backend="HQQ")},
+поскольку vLLM не реализует HQQ.
+
+\subsection{Датасет}
+
+$80$ задач, фиксированный seed: $30$ из AIME-24 (\code{HuggingFaceH4/aime\_2024})
+и $50$ из MATH-500 (\code{HuggingFaceH4/MATH-500}). Оба датасета представлены в
+обучающих данных всех трёх моделей, что \emph{намеренно}: цель — не измерить
+generalisation, а измерить, как квантизация меняет уже выученное поведение
+модели в условиях контролируемой нагрузки.
+Sampling: \code{temperature=0} (greedy), \code{top\_p=1},
+\code{repetition\_penalty=1.05}, \code{max\_tokens=16384}. Greedy
+decoding нужен, чтобы любое расхождение трасс было однозначно
+отнесено к шуму KV-кэша, а не к семплированию.
+
+\subsection{Конвейер: четыре фазы}
+
+\begin{lstlisting}
+Phase 1 (generate)  -> outputs/traces/<model>_<quant>.jsonl
+Phase 2 (find_fdp)  -> outputs/fdps/<model>_<quant>.jsonl
+Phase 3 (judge)     -> outputs/judgments/<model>_<quant>.jsonl
+Phase 4 (analyze)   -> outputs/report.md, outputs/plots/
+Phase 5 (post-hoc)  -> outputs/paper/* (этот отчёт)
+\end{lstlisting}
+
+\paragraph{Phase 1 --- Generation.} Для каждой пары (model, quant)
+генерируются $80$ трасс. Сохраняются: полный текст ответа, токены,
+\code{boxed\_answer}, ground truth, \code{finish\_reason}, метаданные.
+См. \code{scripts/01\_generate\_traces.py}.
+
+\paragraph{Phase 2 --- FDP detection.} Для каждой задачи берутся две
+трассы (bf16 и quantized) одной модели; находится \emph{первая позиция
+токена}, где они расходятся (\code{fdp\_token\_idx}). «Косметические»
+расхождения (пунктуация, эквивалентные форматирования формул)
+отбрасываются с помощью семантической re-sync эвристики на эмбеддингах
+\code{sentence-transformers}. Также вычисляется
+\code{boxed\_match} $\in$
+\{\code{both\_correct}, \code{both\_wrong}, \code{baseline\_only},
+\code{quant\_only}, \code{no\_boxed}\}.
+
+\paragraph{Phase 3 --- Judging.} Каждое FDP передаётся Anthropic Claude
+(\code{claude-sonnet-4-5}, prompt caching на блоке таксономии).
+Возвращаемый JSON содержит категорию A--F, \code{confidence} $\in [0,1]$,
+\code{rationale}, \code{affected\_span}. Шесть категорий таксономии:
+
+\begin{itemize}[leftmargin=*, itemsep=0pt]
+\item \textbf{A} --- Arithmetic (стратегия верна, но конкретный счёт ошибочен);
+\item \textbf{B} --- Logical (посылки верны, вывод некорректен);
+\item \textbf{C} --- Strategy-switch (немотивированное переключение метода);
+\item \textbf{D} --- Hallucination (изобретение несуществующего факта/теоремы);
+\item \textbf{E} --- Premature-termination (трасса оборвалась без ответа);
+\item \textbf{F} --- Repetition/loop (один и тот же шаг повторяется $\geq 3$ раз).
+\end{itemize}
+
+\paragraph{Phase 4 --- Aggregation.} Глобальный \chisq{} по контингентной
+таблице quant $\times$ category и нормализованные failure signatures
+(см. \code{outputs/report.md}).
+
+\paragraph{Phase 5 --- Post-hoc paper analysis.} Скрипт
+\code{scripts/05\_paper\_analysis.py} читает все артефакты Phase~1\,--\,3
+и генерирует восемь дополнительных отчётов в \code{outputs/paper/},
+описанных в разделе~\ref{sec:results}.
+
+\subsection{Инфраструктура}
+
+Все вычисления — на одной spot-инстансе \textbf{Vast.ai L40S} (Ada Lovelace,
+\code{sm\_89}, $48\,$GB VRAM, $\approx \$1.10{-}1.40$/час). Управление
+пайплайном через \code{scripts/run\_all.sh}, диагностика —
+\code{scripts/verify\_run.py}. Артефакты выгружены на HuggingFace Hub:
+\href{https://huggingface.co/datasets/mikemikemike1111/kv-trace-study}
+{\code{mikemikemike1111/kv-trace-study}} ($34$ файла, $79\,$MB).
+
+% =====================================================================
+\section{Ход работы и технические препятствия}
+% =====================================================================
+
+В этом разделе описаны проблемы, возникшие в процессе сбора данных, и
+принятые инженерные решения. Это нужно для оценки достоверности
+полученной выборки.
+
+\subsection{Регрессия в \code{transformers} ломает HQQ KV-cache}
+\label{sec:transformers-bug}
+
+\paragraph{Симптом.} При запуске \code{qwen3-1.7b} $\times$ \code{hqq\_int4}
+на стандартной конфигурации (\code{transformers 4.55.4}, eager attention)
+воспроизводится ошибка:
+
+\begin{lstlisting}
+RuntimeError: The size of tensor a (N) must match the size of tensor b (2)
+              at non-singleton dimension 3
+\end{lstlisting}
+
+Стек уходит в \code{eager\_attention\_forward}, шаг
+\code{attn\_weights + causal\_mask}. Изначально предположили проблему в
+архитектуре Qwen3, но \emph{минимальный воспроизводитель на $15$-токенном
+промпте показал ту же ошибку и для DeepSeek-R1-Distill (Qwen2)}.
+Следовательно, проблема не специфична для Qwen3.
+
+\paragraph{Диагностика.} Понизили \code{transformers} до \code{4.51.3} —
+тот же код работает без изменений. Регрессия в окне \code{4.52} \,$\to$\,
+\code{4.55}; точную ревизию не бисектили из-за бюджета времени.
+
+\paragraph{Решение.} Жёсткий пин в \code{requirements.txt}:
+\begin{lstlisting}
+transformers>=4.51.0,<4.52
+\end{lstlisting}
+(\code{commits 47b8d3a, 8594ffb}). CI обновлён под тот же пин.
+
+\subsection{SDPA-attention несовместим с HQQ-dequantized тензорами}
+
+После понижения \code{transformers} столкнулись с другой ошибкой в
+\code{scaled\_dot\_product\_attention}: KV-тензоры после de-quantization
+из HQQ не имеют contiguous strides, нужного Flash-/Memory-Efficient SDPA
+ядрам. Решение: принудительно \code{attn\_implementation="eager"} при
+загрузке модели (\code{src/kvtrace/generators/hf\_gen.py}).
+
+\subsection{Eager attention слишком медленный для HQQ $\times$ 7B}
+
+После решения 3.1\,--\,3.2 на L40S замерили: один chunk из $4$ задач для
+\code{qwen3-1.7b} $\times$ \code{hqq\_int4} занял \textbf{1975 секунд}
+($33$ токена/с aggregate, против $615$ токенов/с для bf16 vLLM). Полный
+прогон конфигурации ($80$ задач) — $\approx 11$ часов; для 7B-моделей
+ещё дольше. Принято \textbf{частичное покрытие HQQ}: оставили
+\code{hqq\_int4} и \code{hqq\_int2} только для DeepSeek-1.5B
+(уже собранные данные), пропустили Qwen3+HQQ и 7B+HQQ.
+
+\subsection{Разные представления \code{finish\_reason} в vLLM и HF}
+\label{sec:hf-finish-reason}
+
+При post-hoc анализе обнаружено, что HF-генератор всегда пишет
+\code{finish\_reason="stop"}: \code{model.generate()} не возвращает
+per-sample reason. vLLM же различает \code{stop} и \code{length}
+корректно. Следствие: для HQQ-ячеек таблица \code{finish\_reason.md}
+показывает $100\,\%$ \code{stop} \emph{по построению}. Прокси-метрика —
+\code{avg\_gen\_tokens} $\approx \code{max\_tokens}$: если так, сэмпл
+скорее всего упёрся в length cap. Полное обсуждение в
+разделе~\ref{sec:limitations}, §\,2.3.
+
+\subsection{Бюджет и таймлайн}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrl}
+\toprule
+\textbf{Этап} & \textbf{Wall-clock} & \textbf{Стоимость} & \textbf{Заметки} \\
+\midrule
+Phase 1 (vLLM, bf16+fp8)        & $\sim 3.5\,$ч & $\approx \$4.50$ & 9 конфигураций \\
+Phase 1 (HF, HQQ DS-1.5B)       & $\sim 1.0\,$ч & $\approx \$1.30$ & 2 конфигурации \\
+Phase 2 (FDP)                   & $\sim 5\,$мин & --- & CPU-bound \\
+Phase 3 (judge)                 & $\sim 10\,$мин & $\approx \$3.20$ & $637$ Anthropic-вызовов \\
+Phase 4 (aggregate)             & $< 1\,$мин & --- & --- \\
+Диагностика 4.55 баг            & $\sim 1.5\,$ч & $\approx \$2.00$ & 3 неудачных запуска + repro \\
+Phase 5 (post-hoc)              & --- & --- & local CPU \\
+\midrule
+\textbf{Итого}                  & $\sim 6\,$ч GPU & $\approx \$11$ & в пределах бюджета \\
+\bottomrule
+\end{tabular}
+\caption{Таймлайн и бюджет.}
+\label{tab:budget}
+\end{table}
+
+% =====================================================================
+\section{Результаты}
+\label{sec:results}
+% =====================================================================
+
+Все результаты воспроизводимы запуском
+\code{python scripts/05\_paper\_analysis.py} после
+\code{python scripts/04\_analyze.py}. Каждый пункт ниже —
+ссылка на конкретный артефакт.
+
+\subsection{Headline: accuracy по семействам моделей}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Модель} & \textbf{bf16} & \code{fp8\_e4m3} & \code{fp8\_e5m2} & \code{hqq\_int4} & \code{hqq\_int2} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & $35.0\,\%$ & $0.0\,\%$         & $0.0\,\%$ & $0.0\,\%$ & $0.0\,\%$ \\
+Qwen3-1.7B              & $52.5\,\%$ & $\mathbf{53.7\,\%}$ & $51.2\,\%$ & --- & --- \\
+DS-R1-Distill-Qwen-7B   & $60.0\,\%$ & $0.0\,\%$         & $0.0\,\%$ & --- & --- \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy на $80$ задачах AIME-24 + MATH-500. «---» = ячейка
+не собрана из-за регрессии в \code{transformers} (см. §\,3.1) или
+бюджета времени (§\,3.3).}
+\label{tab:accuracy}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{accuracy_bars.png}
+\caption{Accuracy на AIME-24 + MATH-500 по семействам моделей и
+схемам KV-квантизации. Подписи — accuracy и $\Delta$ относительно
+bf16. Семейство DeepSeek коллапсирует на любой квантизации; Qwen3
+устойчиво.}
+\label{fig:accuracy-bars}
+\end{figure}
+
+\paragraph{Главный наблюдаемый эффект.} Семейство DeepSeek-R1-Distill
+демонстрирует \textbf{полный коллапс} под любой квантизацией KV
+(включая самую мягкую FP8-E4M3 на 7B-модели: $60\,\% \to 0\,\%$).
+Семейство Qwen3 устойчиво: FP8-E4M3 даже формально \emph{выше} bf16
+($53.7$ vs $52.5\,\%$), хотя разница в пределах одной задачи.
+
+\paragraph{Гипотеза H1 (монотонная деградация) отвергнута} в обе
+стороны: не наблюдается у Qwen3 (где ничего не деградирует) и нарушается
+на DeepSeek-1.5B, где \code{hqq\_int2} (самая агрессивная) даёт ту же
+accuracy $0\,\%$, что и \code{fp8\_e4m3} (самая мягкая) — все они ниже
+floor возможностей модели.
+
+\paragraph{Гипотеза H3 (архитектурная) подтверждена} наиболее ярко: при
+сравнимых размерах ($1.5\,$B vs $1.7\,$B) Qwen3 переносит FP8 без
+потерь, а DeepSeek-R1-Distill — нет.
+
+\subsection{Per-model \chisq{} таксономии сбоев (Idea 1)}
+
+Глобальный \chisq{} (\code{outputs/report.md}) даёт $\chi^{2}=66.58$,
+$p=1.8\times 10^{-8}$, Cramér's $V=0.187$. Per-model тесты показывают,
+что эффект \textbf{не однороден}:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrrl}
+\toprule
+\textbf{Модель} & \chisq{} & \textbf{dof} & \textbf{$p$-value} & \textbf{Cramér's $V$} & \textbf{Интерпретация} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & $64.33$ & $9$ & $\mathbf{1.94\times 10^{-10}}$ & $0.259$ & строгая зависимость \\
+Qwen3-1.7B              & $5.60$  & $5$ & $\mathbf{0.348}$  & $0.189$ & $H_{0}$ \emph{не отвергается} \\
+DS-R1-Distill-Qwen-7B   & $9.54$  & $2$ & $8.50\times 10^{-3}$ & $0.244$ & e5m2 $\to$ $100\,\%$ F \\
+\bottomrule
+\end{tabular}
+\caption{Per-model \chisq{} тесты независимости failure-mode распределения от
+схемы квантизации. Для Qwen3 две FP8-схемы статистически взаимозаменяемы.}
+\label{tab:per-model-chi2}
+\end{table}
+
+\paragraph{Содержательная интерпретация.}
+\begin{itemize}[leftmargin=*]
+\item \textbf{DeepSeek-1.5B}: разные quant дают разные паттерны сбоев.
+Standardized residual в категории D (Hallucination) для
+\code{fp8\_e4m3} составляет $+4.09$ (сильный outlier) — \code{fp8\_e4m3}
+толкает модель в галлюцинации, тогда как \code{fp8\_e5m2} толкает в
+петли (F).
+\item \textbf{Qwen3-1.7B}: две FP8-схемы статистически взаимозаменяемы.
+Это важный практический вывод: при выборе между E4M3 и E5M2 на Qwen3
+разница в пределах шума.
+\item \textbf{DeepSeek-7B}: \code{e5m2} даёт $100\,\%$ Repetition/loop
+($80/80$); \code{e4m3} даёт $89\,\%$ F + $9\,\%$ D + $2\,\%$ E. Разница в
+\emph{типе} сбоя при одинаковом коллапсе accuracy.
+\end{itemize}
+
+\subsection{Аномалия \code{quant\_only} на Qwen3 (Idea 3)}
+
+\code{boxed\_match = "quant\_only"} — задачи, где quantized-ветвь дала
+правильный ответ, а bf16-baseline — нет. Это нарушает наивное ожидание
+«квантизация может только ухудшать».
+
+Найдено \textbf{$5$ таких случаев}, все на Qwen3-1.7B:
+\begin{itemize}[itemsep=0pt]
+\item $2$ на \code{qwen3-1.7b $\times$ fp8\_e4m3} (problems 8, 14 из AIME-24);
+\item $3$ на \code{qwen3-1.7b $\times$ fp8\_e5m2}.
+\end{itemize}
+
+Один представительный кейс приведён в Приложении~\ref{app:case1}; полный
+side-by-side анализ всех пяти случаев — в \code{outputs/paper/quant\_only\_deepdives.md}.
+Типичный паттерн: bf16-модель \emph{застревает} в избыточной верификации
+найденного решения и не успевает выписать \code{\textbackslash{}boxed\{\}}
+до \code{max\_tokens}, тогда как quantized-ветвь после расхождения
+\emph{короче} и успевает. Судья классифицирует расхождение как
+Strategy-switch (категория C), но конкретно эти switch'и оказались
+полезными.
+
+Параллельно зафиксированы и \code{baseline\_only}-случаи (bf16 правильно,
+quant — нет): $1$ на e4m3, $4$ на e5m2 для Qwen3. Сумма квалифицирующих
+расхождений примерно симметрична, что подтверждает интерпретацию
+\textbf{квантизация как стохастическое возмущение} на Qwen3, а не как
+систематическое ухудшение.
+
+\subsection{Позиция расхождения в трассе (Extra 5)}
+
+Нормированная позиция $\mathrm{FDP\_idx} / \mathrm{baseline\_length}$:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llrrr}
+\toprule
+\textbf{Модель} & \textbf{Quant} & \textbf{n} & \textbf{median} & \textbf{mean} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e4m3} & $80$ & $0.00$ & $0.01$ \\
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e5m2} & $80$ & $0.00$ & $0.01$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e4m3} & $80$ & $0.00$ & $0.05$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e5m2} & $80$ & $0.00$ & $0.00$ \\
+Qwen3-1.7B              & \code{fp8\_e4m3} & $80$ & $\mathbf{0.07}$ & $0.16$ \\
+Qwen3-1.7B              & \code{fp8\_e5m2} & $80$ & $0.03$ & $0.13$ \\
+\bottomrule
+\end{tabular}
+\caption{Распределение позиции первого расхождения. Median вблизи $0$ =
+расхождение в первых процентах трассы.}
+\label{tab:divergence-position}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{divergence_position.png}
+\caption{Гистограммы позиции FDP по (model, quant). Вертикальная
+пунктирная линия — медиана. DeepSeek-модели (строки 1, 3) показывают
+расхождение почти сразу (всё сосредоточено в $[0, 0.05]$); Qwen3
+(строка 2) демонстрирует существенный разброс по всей трассе, медиана
+$\approx 0.07$. «No data» = ячейки, не собранные из-за §\,3.1 / §\,3.3.}
+\label{fig:divergence-position}
+\end{figure}
+
+\paragraph{Содержательно (с поправкой на средние длины трасс).}
+\begin{itemize}[leftmargin=*, itemsep=0pt]
+\item DeepSeek модели расходятся в среднем за \emph{первые $1\,\%$} токенов
+— $\approx 170$ токенов на 1.5B и $\approx 300$ токенов на 7B. Шум KV-кэша
+попадает в reasoning-цепочку почти сразу.
+\item Qwen3-1.7B расходится в среднем на $7\,\% / 13\,\%$ длины трассы —
+$\approx 540 / \approx 1000$ токенов. Модель «удерживает» рассуждение
+значительно дольше до проявления эффекта квантизации.
+\end{itemize}
+Это, по-видимому, ключевой механизм наблюдаемой устойчивости Qwen3:
+расхождение происходит позже, и ёмкости оставшейся трассы хватает на
+самокоррекцию.
+
+\subsection{Token efficiency (Extra 6)}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Модель} & \textbf{Quant} & \textbf{n} & \textbf{avg\_gen} & \textbf{$\Delta$ vs bf16} & \textbf{\% length} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & \code{bf16}      & $80$ & $17077$ & ---     & $48\,\%$ \\
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e4m3} & $80$ & $16180$ & $-5.2\,\%$ & $\mathbf{98\,\%}$ \\
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e5m2} & $80$ & $16094$ & $-5.8\,\%$ & $\mathbf{89\,\%}$ \\
+Qwen3-1.7B              & \code{bf16}      & $80$ & $7748$  & ---     & $22\,\%$ \\
+Qwen3-1.7B              & \code{fp8\_e4m3} & $80$ & $7949$  & $+2.6\,\%$ & $26\,\%$ \\
+Qwen3-1.7B              & \code{fp8\_e5m2} & $80$ & $8099$  & $+4.5\,\%$ & $25\,\%$ \\
+DS-R1-Distill-Qwen-7B   & \code{bf16}      & $80$ & $5997$  & ---     & $19\,\%$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e4m3} & $80$ & $15960$ & $\mathbf{+166\,\%}$ & $\mathbf{92\,\%}$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e5m2} & $80$ & $15805$ & $\mathbf{+164\,\%}$ & $\mathbf{92\,\%}$ \\
+\bottomrule
+\end{tabular}
+\caption{Token efficiency. На DeepSeek-7B FP8 не «ускоряет» инференс,
+а \emph{в $2.66$ раза удлиняет} среднюю генерацию из-за петель. На
+Qwen3 длина почти не меняется — квантизация выгодна по памяти и не
+вредна по латентности.}
+\label{tab:token-efficiency}
+\end{table}
+
+\subsection{Распределение \code{finish\_reason} (Extra 8)}
+
+Прямая верификация механизма категории F: на DeepSeek-7B обе FP8-схемы
+дают $92\,\%$ \code{finish\_reason=length} (vLLM-репорт), что напрямую
+соответствует $80/80$ категории F (Repetition/loop) в
+\code{report.md}. Разница в типе сбоя между моделями — это разница в
+том, \emph{где} обрывается генерация: DeepSeek уходит в петлю и
+расходует \code{max\_tokens}; Qwen3 нормально терминируется с EOS.
+
+\subsection{Валидация таксономии: confidence судьи (Extra 7)}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Категория} & \textbf{n} & \textbf{mean\_conf} & \textbf{std} & \textbf{min} & \textbf{$n_{<0.5}$} \\
+\midrule
+A (Arithmetic)             & $21$  & $0.80$ & $0.10$ & $0.55$ & $0$ \\
+B (Logical)                & $17$  & $0.79$ & $0.08$ & $0.60$ & $0$ \\
+C (Strategy-switch)        & $64$  & $0.74$ & $0.10$ & $0.55$ & $0$ \\
+D (Hallucination)          & $51$  & $0.84$ & $0.07$ & $0.72$ & $0$ \\
+E (Premature-termination)  & $72$  & $0.83$ & $0.13$ & $0.40$ & $1$ \\
+F (Repetition/loop)        & $412$ & $\mathbf{0.95}$ & $0.05$ & $0.72$ & $0$ \\
+\bottomrule
+\end{tabular}
+\caption{Средняя confidence судьи (Anthropic Claude) по категориям.
+F (петля) распознаётся почти идеально (mean = $0.95$); C
+(Strategy-switch) — наименее уверенно (mean = $0.74$).}
+\label{tab:judge-confidence}
+\end{table}
+
+Все категории имеют $< 5$ случаев confidence $< 0.5$, что валидирует
+таксономию как достаточно различимую для целей агрегации.
+
+\subsection{Глобальная статистика расхождений (Extra 9)}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Модель} & \textbf{Quant} & \textbf{both\_correct} & \textbf{both\_wrong} & \textbf{quant\_only} & \textbf{baseline\_only} & \textbf{no\_boxed} \\
+\midrule
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e4m3} & $0$  & $15$ & $0$         & $28$ & $37$ \\
+DS-R1-Distill-Qwen-1.5B & \code{fp8\_e5m2} & $0$  & $14$ & $0$         & $28$ & $38$ \\
+DS-R1-Distill-Qwen-1.5B & \code{hqq\_int4} & $0$  & $14$ & $0$         & $28$ & $38$ \\
+DS-R1-Distill-Qwen-1.5B & \code{hqq\_int2} & $0$  & $14$ & $0$         & $28$ & $38$ \\
+Qwen3-1.7B              & \code{fp8\_e4m3} & $41$ & $22$ & $\mathbf{2}$ & $1$  & $14$ \\
+Qwen3-1.7B              & \code{fp8\_e5m2} & $38$ & $23$ & $\mathbf{3}$ & $4$  & $12$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e4m3} & $0$  & $17$ & $0$         & $48$ & $15$ \\
+DS-R1-Distill-Qwen-7B   & \code{fp8\_e5m2} & $0$  & $17$ & $0$         & $48$ & $15$ \\
+\bottomrule
+\end{tabular}
+\caption{Распределение \code{boxed\_match} по (model, quant). Все $5$
+случаев \code{quant\_only} — на Qwen3-1.7B.}
+\label{tab:fdp-rate}
+\end{table}
+
+Видно, что для DeepSeek \code{both\_correct = 0} во всех клетках: ни в
+одном случае quantized-ветвь не воспроизвела правильный ответ, даже
+если baseline его получил. Для Qwen3 \code{both\_correct} доминирует
+($38{-}41$ из $80$): квантизация в большинстве задач сохраняет
+правильность.
+
+% =====================================================================
+\section{Выводы}
+% =====================================================================
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{H3 подтверждена.} Семейство модели — главный фактор
+чувствительности к квантизации KV-кэша при сравнимом размере.
+Архитектурно более новый Qwen3-1.7B полностью переносит FP8;
+distilled DeepSeek-R1 коллапсирует уже на E4M3.
+
+\item \textbf{H1 опровергнута.} Деградация не монотонна по
+агрессивности квантизации. На DeepSeek-1.5B accuracy $= 0\,\%$ уже на
+самой мягкой схеме, и далее не падает (нечему). На Qwen3 accuracy
+не падает вовсе.
+
+\item \textbf{H2 частично подтверждена.} Тип сбоя действительно
+зависит от quant: на DeepSeek-1.5B \code{fp8\_e4m3} даёт $+4.09$
+standardized residual в категории D (галлюцинации), \code{fp8\_e5m2}
+уходит в F (петли); \code{hqq\_int2} уходит в E (преждевременная
+остановка). Однако сила эффекта (Cramér's $V = 0.26$) —
+small-to-moderate, и для воспроизводимого утверждения на уровне
+«E4M3 $\to$ арифметика, INT2 $\to$ галлюцинации» нужен сэмпл-сайз
+больше $80$ задач.
+
+\item \textbf{Качественное наблюдение.} Позиция расхождения
+($\approx 1\,\%$ длины для DeepSeek vs $\approx 10\,\%$ для Qwen3)
+— кандидатный механизм для устойчивости Qwen3. Гипотеза для будущей
+работы: устойчивые модели «амортизируют» шум KV в первых сотнях
+токенов рассуждения.
+\end{enumerate}
+
+% =====================================================================
+\section{Ограничения}
+\label{sec:limitations}
+% =====================================================================
+
+Полный список и обоснование — в \code{outputs/paper/limitations.md}.
+Кратко:
+\begin{itemize}[leftmargin=*]
+\item \textbf{Покрытие}: $4$ из $15$ ячеек (model $\times$ quant) не
+собраны из-за регрессии в \code{transformers $\geq 4.55.0$} (см. §\,3.1)
+и/или wall-clock budget на eager-attention пути (§\,3.3). Все эти $4$ —
+HQQ $\times$ \{Qwen3-1.7B, DeepSeek-7B\}.
+\item \textbf{Sampling}: только greedy \code{temperature=0}; нет оценки
+variance.
+\item \textbf{\code{repetition\_penalty=1.05}} для всех конфигураций —
+для DeepSeek может быть слишком мягким; вероятно, при $1.10{-}1.15$
+категория F уступит место «настоящим» арифметико-логическим ошибкам,
+что изменит таблицу таксономии.
+\item \textbf{\code{finish\_reason} в HF-генераторе} некорректен (всегда
+\code{stop}); требует фикса для будущих HQQ-прогонов (см. §\,3.4).
+\item \textbf{Один судья} (Anthropic Claude); $\kappa$ с альтернативным
+судьёй не считалась.
+\item \textbf{Бенчмарки контаминированы} в обучающих данных моделей —
+внешняя валидность ограничена.
+\end{itemize}
+
+% =====================================================================
+\section{Будущая работа}
+% =====================================================================
+
+Конкретные эксперименты, ранжированные по приоритету и стоимости:
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Sweep по \code{repetition\_penalty}} на DeepSeek $\times$
+FP8 ($4$ конфигурации $\times 80$ задач $\times 4$ значения penalty
+$= 1280$ trials, $\approx \$8$ GPU). Цель: проверить, проявляются ли
+«настоящие» сбои при подавлении петель.
+
+\item \textbf{Дозбор HQQ ячеек} после фикса в \code{transformers}
+($4$ ячейки, $\approx \$15$ GPU при возврате к vLLM-friendly stack или
+$\approx \$50$ при текущем eager path).
+
+\item \textbf{Multi-seed ($n=8$) на \code{temperature=0.6}} для оценки
+variance — $\approx \$30$ GPU.
+
+\item \textbf{Cross-architecture replication}: добавить
+\code{Llama-3.2-3B} и \code{Qwen2.5-3B} для проверки, является ли
+«Qwen3 robust, DeepSeek collapses» явлением семейства или специфики
+distillation.
+
+\item \textbf{Inter-rater agreement}: 100-divergence subset через
+GPT-4o, Cohen's $\kappa$.
+
+\item \textbf{Per-layer KV-quant ablation}: квантизовать только первые
+$N$ или только последние $N$ слоёв — поиск «уязвимого» региона.
+\end{enumerate}
+
+% =====================================================================
+\section{Воспроизводимость и артефакты}
+% =====================================================================
+
+\subsection{Код}
+
+Репозиторий: https://github.com/neuraCollab/kv-cache-small-distill-errors. Ключевые скрипты:
+\begin{itemize}[leftmargin=*, itemsep=0pt]
+\item \code{scripts/01\_generate\_traces.py} — Phase 1
+\item \code{scripts/02\_find\_fdps.py} — Phase 2
+\item \code{scripts/03\_judge\_fdps.py} — Phase 3
+\item \code{scripts/04\_analyze.py} — Phase 4
+\item \code{scripts/05\_paper\_analysis.py} — Phase 5 (post-hoc)
+\item \code{scripts/verify\_run.py} — диагностика после прогона
+\item \code{scripts/run\_all.sh} — orchestrator
+\end{itemize}
+
+\subsection{Зависимости}
+
+\code{requirements.txt} фиксирует все пины. Критические:
+\begin{lstlisting}
+vllm        >= 0.7.3, < 0.9
+transformers>= 4.51.0, < 4.52   # см. § 3.1
+hqq         >= 0.2.5
+anthropic   == 0.40.0
+\end{lstlisting}
+
+\subsection{Артефакты}
+
+Все $11$ трасс + $8$ FDP + $8$ judgments + \code{report.md} + \code{paper/*}
+выгружены на HuggingFace Hub:
+\href{https://huggingface.co/datasets/mikemikemike1111/kv-trace-study}
+{\code{mikemikemike1111/kv-trace-study}} ($34$ файла, $79\,$MB).
+
+\subsection{CI и тесты}
+
+GitHub Actions workflow \code{.github/workflows/ci.yml} запускает на
+каждый PR: \code{ruff}, \code{mypy}, \code{pytest} (CPU-only маркеры) с
+покрытием $\geq 85\,\%$. Live-API тесты (Anthropic) и GPU-only тесты
+помечены \code{@pytest.mark.live\_api}, \code{@pytest.mark.gpu} и
+пропускаются в CI.
+
+% =====================================================================
+\appendix
+\section{Представительный \code{quant\_only} кейс}
+\label{app:case1}
+% =====================================================================
+
+\textit{Полный набор из $5$ кейсов с side-by-side трассами —
+в \code{outputs/paper/quant\_only\_deepdives.md}. Здесь приведён один,
+наиболее показательный.}
+
+\paragraph{Case 1: \code{qwen3-1.7b} $\times$ \code{fp8\_e4m3} $\times$ problem 8 (AIME-24).}
+\begin{itemize}[leftmargin=*, itemsep=0pt]
+\item \textbf{FDP token idx}: $554$
+\item \textbf{Ground truth}: $25$
+\item \textbf{Baseline boxed}: \code{None} (не успел дописать)
+\item \textbf{Quant boxed}: $25$
+\item \textbf{Judge category}: \textbf{C (Strategy-switch)}, confidence $0.85$
+\item \textbf{Judge rationale}: «The quantized trace abandons the clean
+substitution approach (\,$k = \log_{y}(x)$\,) that was working and switches to
+substituting $y = x^{10/x}$ and then yet another approach, without
+motivation. The baseline continues directly to the answer using the
+established substitution.»
+\end{itemize}
+
+\paragraph{Задача.}
+\begin{quote}
+\itshape
+There exist real numbers $x$ and $y$, both greater than $1$, such that
+$\log_{x}(y^{x}) = \log_{y}(x^{4y}) = 10$. Find $xy$.
+\end{quote}
+
+\paragraph{Общий префикс рассуждения (последняя часть, идентичная в обеих ветвях).}
+\begin{lstlisting}
+4y * log_y(x) = 10.
+
+Now, I have two equations:
+
+1) x * log_x(y) = 10
+2) 4y * log_y(x) = 10
+
+Hmm, maybe I can express log_x(y) in terms of log_y(x)? Because
+log_x(y) is the reciprocal of log_y(x), right? ... So, log_x(y) =
+1 / log_y(x). ...
+
+So, if I let log_y(x) be some variable, say, let me denote log_y(x)
+as k. Then log_x(y) would be 1/k.
+
+So, substituting back into the equations:
+First equation:  x * (1/k) = 10  =>  x/k = 10  =>  x = 10k.
+Second equation: 4y * k = 10     =>  yk = 10/4 = 5/2.
+
+So now, we have x
+\end{lstlisting}
+
+\paragraph{Baseline (bf16) после расхождения.}
+\begin{lstlisting}
+... So now, we have x = 10k and y = (5/2)/k. Therefore,
+xy = 10k * (5/2)/k = 10*(5/2) = 25.
+
+Wait, so is it 25? That seems straightforward, but let me check
+if there are any constraints or if I made a mistake.
+
+Wait, but hold on. Let me make sure that my substitution is
+correct. Let me retrace.
+
+Let me define k = log_y(x). Then ...
+[trace продолжается верификацией; модель не успевает выписать
+ \boxed{} до max_tokens = 16384]
+\end{lstlisting}
+
+\paragraph{Quantized (\code{fp8\_e4m3}) после расхождения.}
+\begin{lstlisting}
+... but maybe.
+
+Now moving on to the second equation: log_y(x^{4y}) = 10.
+Again, using the same logarithm property:
+log_y(x^{4y}) = 4y * log_y(x) = 10.
+
+Similarly, if I let log_y(x) = m, then y^m = x. And from the
+equation above, 4y * m = 10. So m = 10/(4y) = 5/(2y).
+
+But also, log_y(x) = m = ln(x)/ln(y). But maybe I can relate this
+to the previous expression?
+
+Wait, earlier I had from the first equation that y = x^{10/x}.
+... [более короткий путь, успевает дойти до boxed{25}]
+\end{lstlisting}
+
+\paragraph{Интерпретация.} Baseline \emph{избыточно верифицирует} уже
+найденное решение и расходует токены на retracing своих собственных
+выкладок. Quantized-ветвь после расхождения переходит на другую
+параметризацию ($y = x^{10/x}$), которая локально кажется судье
+немотивированной (категория C), но \emph{короче} ведёт к ответу — и
+успевает выписать \code{\textbackslash{}boxed\{25\}} до \code{max\_tokens}.
+Случай иллюстрирует, что метрика accuracy в режиме длинных reasoning-трасс
+существенно зависит от длины генерации, а квантизация — стохастический
+сдвиг этой длины.
+
+% =====================================================================
+\section{Список supplementary артефактов}
+\label{app:artifacts}
+% =====================================================================
+
+Все артефакты в директории \code{outputs/paper/}:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Файл} & \textbf{Содержание} \\
+\midrule
+\code{report.tex}                  & Этот документ \\
+\code{supervisor\_report.md}       & Markdown-версия для быстрого чтения \\
+\code{per\_model\_chi2.md, .csv}   & Per-model \chisq{} и Cramér's $V$ (Idea 1) \\
+\code{accuracy\_bars.png, .svg}    & Bar chart accuracy (Idea 2; figure~\ref{fig:accuracy-bars}) \\
+\code{quant\_only\_deepdives.md}   & Все $5$ \code{quant\_only} кейсов с трассами (Idea 3) \\
+\code{limitations.md}              & Полный список ограничений (Idea 4) \\
+\code{divergence\_position.png}, .svg, .md & Гистограммы и таблица позиции FDP (Extra 5; figure~\ref{fig:divergence-position}) \\
+\code{token\_efficiency.md}        & Token efficiency (Extra 6; table~\ref{tab:token-efficiency}) \\
+\code{judge\_confidence.md}        & Validation таксономии (Extra 7; table~\ref{tab:judge-confidence}) \\
+\code{finish\_reason.md}           & Распределение \code{finish\_reason} (Extra 8) \\
+\code{fdp\_rate.md}                & Per-model FDP rate (Extra 9; table~\ref{tab:fdp-rate}) \\
+\bottomrule
+\end{tabular}
+\caption{Inventory artefacts.}
+\end{table}
+
+\end{document}

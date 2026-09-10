@@ -1,0 +1,49 @@
+{
+  "n_new": 5,
+  "n_evaluated": 5,
+  "per_problem": [
+    {
+      "problem_idx": 80,
+      "prompt_len": 69,
+      "true_fdp": 63,
+      "predicted_fdp": 62.5413932800293,
+      "abs_error": 0.4586067199707031,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 81,
+      "prompt_len": 72,
+      "true_fdp": 8,
+      "predicted_fdp": 32.295047760009766,
+      "abs_error": 24.295047760009766,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 82,
+      "prompt_len": 110,
+      "true_fdp": 99,
+      "predicted_fdp": 285.4979248046875,
+      "abs_error": 186.4979248046875,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 83,
+      "prompt_len": 47,
+      "true_fdp": 37,
+      "predicted_fdp": 44.496124267578125,
+      "abs_error": 7.496124267578125,
+      "status": "ok"
+    },
+    {
+      "problem_idx": 84,
+      "prompt_len": 79,
+      "true_fdp": 45,
+      "predicted_fdp": 29.150400161743164,
+      "abs_error": 15.849599838256836,
+      "status": "ok"
+    }
+  ],
+  "MAE": 46.919460678100585,
+  "R2": -6.881104726167934,
+  "Spearman": 0.7
+}

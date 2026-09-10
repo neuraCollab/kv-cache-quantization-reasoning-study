@@ -1,0 +1,59 @@
+{
+  "n_problems": 5,
+  "n_layers": 28,
+  "model": "Qwen/Qwen3-1.7B",
+  "fresh_indices": [
+    70,
+    71,
+    72,
+    73,
+    74
+  ],
+  "per_quant": {
+    "fp8_e4m3": {
+      "layer_rel_err_mean": 0.026624407087053572,
+      "layer_rel_err_median": 0.026611328125,
+      "layer_rel_err_max": 0.0286865234375,
+      "top1_ch_noise_frac_mean": 0.11655825097517604,
+      "top1_ch_noise_frac_median": 0.10095176765289725,
+      "top1_ch_noise_frac_max": 0.4273255813953488,
+      "top10_ch_noise_frac_mean": 0.48847189307324107,
+      "top10_ch_noise_frac_median": 0.4370194432169686,
+      "top10_ch_noise_frac_max": 0.9550561797752809,
+      "defended_rel_err_mean": 0.018786839076450894,
+      "defended_rel_err_median": 0.02056884765625,
+      "defended_rel_err_max": 0.02587890625,
+      "defense_change_pct": -29.437530702472568
+    },
+    "fp8_e5m2": {
+      "layer_rel_err_mean": 0.0528076171875,
+      "layer_rel_err_median": 0.052978515625,
+      "layer_rel_err_max": 0.05908203125,
+      "top1_ch_noise_frac_mean": 0.11891579272919084,
+      "top1_ch_noise_frac_median": 0.09848784194528876,
+      "top1_ch_noise_frac_max": 0.420863309352518,
+      "top10_ch_noise_frac_mean": 0.4899418425594891,
+      "top10_ch_noise_frac_median": 0.4301948051948052,
+      "top10_ch_noise_frac_max": 0.9532163742690059,
+      "defended_rel_err_mean": 0.03723362513950893,
+      "defended_rel_err_median": 0.0408935546875,
+      "defended_rel_err_max": 0.051025390625,
+      "defense_change_pct": -29.491942408031175
+    },
+    "hqq_int4": {
+      "layer_rel_err_mean": 0.11099679129464286,
+      "layer_rel_err_median": 0.108154296875,
+      "layer_rel_err_max": 0.162109375,
+      "top1_ch_noise_frac_mean": 0.016021033426509915,
+      "top1_ch_noise_frac_median": 0.012464412363522463,
+      "top1_ch_noise_frac_max": 0.05555555555555555,
+      "top10_ch_noise_frac_mean": 0.13812541576072995,
+      "top10_ch_noise_frac_median": 0.11241877123024664,
+      "top10_ch_noise_frac_max": 0.3939393939393939,
+      "defended_rel_err_mean": 0.10639997209821428,
+      "defended_rel_err_median": 0.10400390625,
+      "defended_rel_err_max": 0.15625,
+      "defense_change_pct": -4.141398271798911
+    }
+  }
+}

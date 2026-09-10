@@ -12,7 +12,7 @@ they degrade accuracy. Output is a markdown + JSON report with failure
 
 ## What it does
 
-Four idempotent phases:
+Five idempotent phases:
 
 1. **GENERATE** — run each of 3 models × 5 KV-cache configurations × 80
    math problems (30 AIME-24 + 50 MATH-500) through its own generator
@@ -28,6 +28,35 @@ Four idempotent phases:
 4. **ANALYZE** — build a confusion matrix (method × category), run a
    chi-square independence test and Cramér's V, and emit a deterministic
    markdown + JSON report plus heatmap plots.
+5. **PAPER ANALYSIS** (post-hoc, CPU-only) — per-model chi-square/Cramér's V
+   breakdowns, accuracy-by-model plots, divergence-position histograms,
+   token-efficiency and `finish_reason` tables, judge-confidence validation,
+   and `quant_only` case deep-dives — the tables and figures behind
+   [`research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md).
+   Verified to reproduce that report's numbers exactly from the checked-in
+   Phase 1-3 data (see `tests/test_paper_analysis.py`).
+6. **KV CAPTURE** (mechanistic) — `src/kvtrace/kv_capture/` +
+   `scripts/06_kv_capture.py` teacher-force an already-generated bf16 trace
+   through the real model under a quantized KV cache (FP8 fake-quantized via
+   torch's native `float8_e4m3fn`/`float8_e5m2` dtypes, since vLLM doesn't
+   expose per-layer K/V for introspection; HQQ via the real production
+   `QuantizedCache`), capturing per-layer attention-shift KL, KV statistics,
+   logit-KL trajectory, and outlier-channel scores, plus three follow-on
+   analyses grounded in the author's recovered NIR report:
+   `scripts/07_layer_ablation.py` (single-layer ablation, quantizing one
+   layer at a time), `scripts/08_defense_recipe.py` (the "protect top-N
+   outlier channels in bf16" recipe — both a teacher-forced measurement and
+   a real autoregressive `model.generate()` validation, since the report
+   found the lab-measured benefit mostly disappears in real generation),
+   and `scripts/09_multiseed_jaccard.py` (outlier-channel identity across
+   sampling seeds). Reconstructs this much of
+   [`research/kv-cache-reasoning-divergence-study/mechanistic-analysis/`](research/kv-cache-reasoning-divergence-study/mechanistic-analysis/)
+   (whose original code wasn't recovered, only its outputs) — the CNN
+   failure-predictor is deliberately not implemented (needs further work
+   first), and "counterfactual skip-K" isn't described anywhere in the
+   recovered report, so nothing was reconstructed for it. The hook/capture
+   plumbing (including real `model.generate()` with a custom cache) is
+   verified end-to-end against a real model via `pytest -m network`.
 
 Each phase is resumable from HuggingFace Hub snapshots, so a Vast.ai
 instance death in the middle of the run is cheap to recover from.
@@ -125,6 +154,12 @@ python scripts/03_judge_fdps.py
 
 # Phase 4 — CPU only, <1 min
 python scripts/04_analyze.py
+
+# Phase 5 — CPU only, no GPU/network; post-hoc tables + plots for the paper
+python scripts/05_paper_analysis.py
+
+# Phase 6 — mechanistic KV-capture vs. the bf16 baseline
+python scripts/06_kv_capture.py --model deepseek-r1-distill-qwen-1.5b --quant fp8_e4m3
 ```
 
 ## Testing
@@ -138,15 +173,19 @@ make test-gpu
 
 # Live-API calibration (run before Phase 3)
 make test-live
+
+# Downloads a tiny real HF model to verify the kv_capture hook wiring end-to-end
+make test-network
 ```
 
-Three pytest markers:
+Four pytest markers:
 
 | Marker | When to run |
 |---|---|
 | (none) | always; CI default |
 | `@pytest.mark.gpu` | before renting GPU time |
 | `@pytest.mark.live_api` | before each Phase 3 run (catches Anthropic drift) |
+| `@pytest.mark.network` | verifying `kv_capture/` hook wiring against a real model |
 
 ## Repository layout
 
@@ -158,9 +197,10 @@ kv-trace-study/
 │   ├── fdp/                  # hybrid token + semantic re-sync finder
 │   ├── judge/                # taxonomy, prompt, Claude client, golden set
 │   ├── hf_hub/               # idempotent upload / download
-│   └── analysis/             # signatures + markdown report
-├── scripts/                  # 01…04 phase CLIs + run_all.sh
-├── tests/                    # CPU, GPU, and live-API suites
+│   ├── analysis/             # signatures + markdown report + paper tables/plots
+│   └── kv_capture/           # mechanistic capture: fake-quant cache, KL/outlier metrics
+├── scripts/                  # 01…06 phase CLIs + run_all.sh
+├── tests/                    # CPU, GPU, live-API, and network suites
 └── outputs/                  # runtime artifacts (gitignored)
 ```
 
@@ -176,8 +216,22 @@ kv-trace-study/
 - Each JSONL row is self-describing — model, config, seed, timestamp,
   prompt version.
 
+## Results
+
+The completed study — the actual traces, FDP records, judge classifications,
+compiled report, and a deeper mechanistic-analysis pass (attention shift,
+layer ablation, failure prediction) — lives in
+[`research/kv-cache-reasoning-divergence-study/`](research/kv-cache-reasoning-divergence-study/).
+Start with
+[`RESULTS.md`](research/kv-cache-reasoning-divergence-study/RESULTS.md) —
+findings ranked by novelty/significance, each with a reproduction command —
+or [`paper/supervisor_report.md`](research/kv-cache-reasoning-divergence-study/paper/supervisor_report.md)
+for the full original write-up. `research/` also holds an earlier prototype, a general
+(non-reasoning) quantization benchmark, and the theoretical background work —
+see [`research/README.md`](research/README.md) for the full index.
+
 ## Citation
 
-The paper is not in this repository. The dataset and code here are the
-*reproducibility appendix*: cite them via the HuggingFace dataset id and
-the GitHub commit hash.
+The compiled report (`research/kv-cache-reasoning-divergence-study/paper/report.pdf`)
+and dataset are the citable artifacts: cite via the HuggingFace dataset id
+and the GitHub commit hash.

@@ -1,0 +1,1034 @@
+[
+  {
+    "problem_id": 0,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      925,
+      1176
+    ],
+    "quant_window": [
+      0,
+      116
+    ]
+  },
+  {
+    "problem_id": 1,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      898,
+      1149
+    ],
+    "quant_window": [
+      372,
+      623
+    ]
+  },
+  {
+    "problem_id": 2,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      939,
+      1190
+    ],
+    "quant_window": [
+      877,
+      1128
+    ]
+  },
+  {
+    "problem_id": 3,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      156
+    ],
+    "quant_window": [
+      0,
+      113
+    ]
+  },
+  {
+    "problem_id": 4,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      384,
+      635
+    ],
+    "quant_window": [
+      0,
+      129
+    ]
+  },
+  {
+    "fdp_token_idx": 14,
+    "top1_a": 35933,
+    "top1_b": 25362,
+    "top1_match": false,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.026509705930948257,
+    "kl_b_to_a": 0.02803678624331951,
+    "js_divergence": 0.027273246087133884,
+    "problem_id": 5,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 6,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      873,
+      1124
+    ],
+    "quant_window": [
+      0,
+      119
+    ]
+  },
+  {
+    "problem_id": 7,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      523,
+      774
+    ],
+    "quant_window": [
+      0,
+      163
+    ]
+  },
+  {
+    "problem_id": 8,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      404,
+      655
+    ],
+    "quant_window": [
+      905,
+      1156
+    ]
+  },
+  {
+    "problem_id": 9,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      436,
+      687
+    ],
+    "quant_window": [
+      430,
+      681
+    ]
+  },
+  {
+    "problem_id": 10,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      427,
+      678
+    ],
+    "quant_window": [
+      867,
+      1118
+    ]
+  },
+  {
+    "problem_id": 11,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      977,
+      1228
+    ],
+    "quant_window": [
+      0,
+      118
+    ]
+  },
+  {
+    "problem_id": 12,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      862,
+      1113
+    ],
+    "quant_window": [
+      0,
+      113
+    ]
+  },
+  {
+    "problem_id": 13,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      907,
+      1158
+    ],
+    "quant_window": [
+      398,
+      649
+    ]
+  },
+  {
+    "problem_id": 14,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      384,
+      635
+    ],
+    "quant_window": [
+      415,
+      666
+    ]
+  },
+  {
+    "problem_id": 15,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      111
+    ],
+    "quant_window": [
+      891,
+      1142
+    ]
+  },
+  {
+    "problem_id": 16,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      124
+    ],
+    "quant_window": [
+      924,
+      1175
+    ]
+  },
+  {
+    "problem_id": 17,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      858,
+      1109
+    ],
+    "quant_window": [
+      898,
+      1149
+    ]
+  },
+  {
+    "problem_id": 18,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      426,
+      677
+    ],
+    "quant_window": [
+      389,
+      640
+    ]
+  },
+  {
+    "problem_id": 19,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      126
+    ],
+    "quant_window": [
+      376,
+      627
+    ]
+  },
+  {
+    "problem_id": 20,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      411,
+      662
+    ],
+    "quant_window": [
+      0,
+      127
+    ]
+  },
+  {
+    "fdp_token_idx": 19,
+    "top1_a": 13649,
+    "top1_b": 13649,
+    "top1_match": true,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.0019215928623452783,
+    "kl_b_to_a": 0.0029480759985744953,
+    "js_divergence": 0.002434834430459887,
+    "problem_id": 21,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 22,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      434,
+      685
+    ],
+    "quant_window": [
+      0,
+      120
+    ]
+  },
+  {
+    "problem_id": 23,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      905,
+      1156
+    ],
+    "quant_window": [
+      882,
+      1133
+    ]
+  },
+  {
+    "problem_id": 24,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      473,
+      724
+    ],
+    "quant_window": [
+      0,
+      117
+    ]
+  },
+  {
+    "problem_id": 25,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      418,
+      669
+    ],
+    "quant_window": [
+      869,
+      1120
+    ]
+  },
+  {
+    "problem_id": 26,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      598,
+      849
+    ],
+    "quant_window": [
+      0,
+      121
+    ]
+  },
+  {
+    "problem_id": 27,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      387,
+      638
+    ],
+    "quant_window": [
+      0,
+      167
+    ]
+  },
+  {
+    "problem_id": 28,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      384,
+      635
+    ],
+    "quant_window": [
+      0,
+      116
+    ]
+  },
+  {
+    "problem_id": 29,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      1011,
+      1262
+    ],
+    "quant_window": [
+      496,
+      747
+    ]
+  },
+  {
+    "problem_id": 30,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      386,
+      637
+    ],
+    "quant_window": [
+      861,
+      1112
+    ]
+  },
+  {
+    "problem_id": 31,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      472,
+      723
+    ],
+    "quant_window": [
+      0,
+      110
+    ]
+  },
+  {
+    "problem_id": 32,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      951,
+      1202
+    ],
+    "quant_window": [
+      881,
+      1132
+    ]
+  },
+  {
+    "problem_id": 33,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      145
+    ],
+    "quant_window": [
+      973,
+      1224
+    ]
+  },
+  {
+    "problem_id": 34,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      871,
+      1122
+    ],
+    "quant_window": [
+      382,
+      633
+    ]
+  },
+  {
+    "problem_id": 35,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      396,
+      647
+    ],
+    "quant_window": [
+      407,
+      658
+    ]
+  },
+  {
+    "problem_id": 36,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      908,
+      1159
+    ],
+    "quant_window": [
+      890,
+      1141
+    ]
+  },
+  {
+    "problem_id": 37,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      595,
+      846
+    ],
+    "quant_window": [
+      420,
+      671
+    ]
+  },
+  {
+    "problem_id": 38,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      380,
+      631
+    ],
+    "quant_window": [
+      424,
+      675
+    ]
+  },
+  {
+    "problem_id": 39,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      955,
+      1206
+    ],
+    "quant_window": [
+      386,
+      637
+    ]
+  },
+  {
+    "problem_id": 40,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      391,
+      642
+    ],
+    "quant_window": [
+      0,
+      111
+    ]
+  },
+  {
+    "fdp_token_idx": 1030,
+    "top1_a": 582,
+    "top1_b": 582,
+    "top1_match": true,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.02899143286049366,
+    "kl_b_to_a": 0.029870769008994102,
+    "js_divergence": 0.02943110093474388,
+    "problem_id": 41,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 42,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      1005,
+      1256
+    ],
+    "quant_window": [
+      0,
+      105
+    ]
+  },
+  {
+    "problem_id": 43,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      866,
+      1117
+    ],
+    "quant_window": [
+      442,
+      693
+    ]
+  },
+  {
+    "fdp_token_idx": 16,
+    "top1_a": 6771,
+    "top1_b": 6771,
+    "top1_match": true,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.009884648956358433,
+    "kl_b_to_a": 0.010348640382289886,
+    "js_divergence": 0.01011664466932416,
+    "problem_id": 44,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 45,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      135
+    ],
+    "quant_window": [
+      0,
+      125
+    ]
+  },
+  {
+    "problem_id": 46,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      403,
+      654
+    ],
+    "quant_window": [
+      410,
+      661
+    ]
+  },
+  {
+    "problem_id": 47,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      130
+    ],
+    "quant_window": [
+      0,
+      115
+    ]
+  },
+  {
+    "fdp_token_idx": 1005,
+    "top1_a": 11,
+    "top1_b": 11,
+    "top1_match": true,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.0006687217392027378,
+    "kl_b_to_a": 0.0008850613958202302,
+    "js_divergence": 0.000776891567511484,
+    "problem_id": 48,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 49,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      416,
+      667
+    ],
+    "quant_window": [
+      0,
+      112
+    ]
+  },
+  {
+    "problem_id": 50,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      508,
+      759
+    ],
+    "quant_window": [
+      428,
+      679
+    ]
+  },
+  {
+    "problem_id": 51,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      399,
+      650
+    ],
+    "quant_window": [
+      0,
+      131
+    ]
+  },
+  {
+    "problem_id": 52,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      167
+    ],
+    "quant_window": [
+      0,
+      135
+    ]
+  },
+  {
+    "fdp_token_idx": 9,
+    "top1_a": 23606,
+    "top1_b": 23606,
+    "top1_match": true,
+    "top5_overlap": 4,
+    "kl_a_to_b": 0.0057839807122945786,
+    "kl_b_to_a": 0.006118895020335913,
+    "js_divergence": 0.005951437866315246,
+    "problem_id": 53,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 54,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      433,
+      684
+    ],
+    "quant_window": [
+      0,
+      140
+    ]
+  },
+  {
+    "problem_id": 55,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      192
+    ],
+    "quant_window": [
+      0,
+      119
+    ]
+  },
+  {
+    "problem_id": 56,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      139
+    ],
+    "quant_window": [
+      420,
+      671
+    ]
+  },
+  {
+    "problem_id": 57,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      130
+    ],
+    "quant_window": [
+      0,
+      117
+    ]
+  },
+  {
+    "fdp_token_idx": 1014,
+    "top1_a": 374,
+    "top1_b": 374,
+    "top1_match": true,
+    "top5_overlap": 5,
+    "kl_a_to_b": 0.16510194540023804,
+    "kl_b_to_a": 0.17696711421012878,
+    "js_divergence": 0.1710345298051834,
+    "problem_id": 58,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 59,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      406,
+      657
+    ],
+    "quant_window": [
+      365,
+      616
+    ]
+  },
+  {
+    "problem_id": 60,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      394,
+      645
+    ],
+    "quant_window": [
+      432,
+      683
+    ]
+  },
+  {
+    "problem_id": 61,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      478,
+      729
+    ],
+    "quant_window": [
+      389,
+      640
+    ]
+  },
+  {
+    "problem_id": 62,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      872,
+      1123
+    ],
+    "quant_window": [
+      0,
+      138
+    ]
+  },
+  {
+    "problem_id": 63,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      931,
+      1182
+    ],
+    "quant_window": [
+      0,
+      138
+    ]
+  },
+  {
+    "problem_id": 64,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      602,
+      853
+    ],
+    "quant_window": [
+      899,
+      1150
+    ]
+  },
+  {
+    "problem_id": 65,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      453,
+      704
+    ],
+    "quant_window": [
+      0,
+      105
+    ]
+  },
+  {
+    "problem_id": 66,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      422,
+      673
+    ],
+    "quant_window": [
+      404,
+      655
+    ]
+  },
+  {
+    "problem_id": 67,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      128
+    ],
+    "quant_window": [
+      0,
+      120
+    ]
+  },
+  {
+    "problem_id": 68,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      440,
+      691
+    ],
+    "quant_window": [
+      419,
+      670
+    ]
+  },
+  {
+    "problem_id": 69,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      457,
+      708
+    ],
+    "quant_window": [
+      385,
+      636
+    ]
+  },
+  {
+    "problem_id": 70,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      893,
+      1144
+    ],
+    "quant_window": [
+      858,
+      1109
+    ]
+  },
+  {
+    "problem_id": 71,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      111
+    ],
+    "quant_window": [
+      0,
+      121
+    ]
+  },
+  {
+    "problem_id": 72,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      134
+    ],
+    "quant_window": [
+      0,
+      126
+    ]
+  },
+  {
+    "problem_id": 73,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      974,
+      1225
+    ],
+    "quant_window": [
+      867,
+      1118
+    ]
+  },
+  {
+    "problem_id": 74,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      0,
+      126
+    ],
+    "quant_window": [
+      0,
+      111
+    ]
+  },
+  {
+    "problem_id": 75,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      882,
+      1133
+    ],
+    "quant_window": [
+      458,
+      709
+    ]
+  },
+  {
+    "fdp_token_idx": 1066,
+    "top1_a": 35268,
+    "top1_b": 35268,
+    "top1_match": true,
+    "top5_overlap": 4,
+    "kl_a_to_b": 5.607389397255247e-08,
+    "kl_b_to_a": -3.361205003216128e-08,
+    "js_divergence": 1.1230921970195595e-08,
+    "problem_id": 76,
+    "quant": "fp8_e5m2"
+  },
+  {
+    "problem_id": 77,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      448,
+      699
+    ],
+    "quant_window": [
+      422,
+      673
+    ]
+  },
+  {
+    "problem_id": 78,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      468,
+      719
+    ],
+    "quant_window": [
+      461,
+      712
+    ]
+  },
+  {
+    "problem_id": 79,
+    "quant": "fp8_e5m2",
+    "skipped": "different_windows",
+    "bf16_window": [
+      892,
+      1143
+    ],
+    "quant_window": [
+      394,
+      645
+    ]
+  }
+]

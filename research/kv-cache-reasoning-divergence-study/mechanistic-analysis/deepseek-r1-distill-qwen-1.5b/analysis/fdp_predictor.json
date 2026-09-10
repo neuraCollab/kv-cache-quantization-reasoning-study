@@ -1,0 +1,43 @@
+{
+  "model": "DeepSeek-R1-Distill-Qwen-1.5B",
+  "captures_dir": "outputs\\kv_capture\\deepseek-r1-distill-qwen-1.5b\\fp8_e4m3_tf",
+  "n_problems": 80,
+  "n_features": 252,
+  "raw_shape": [
+    80,
+    56,
+    128
+  ],
+  "fdp_range": [
+    1.0,
+    1008.0
+  ],
+  "fdp_mean": 44.75,
+  "fdp_std": 172.80157470703125,
+  "results": {
+    "GBM": {
+      "r2_mean": -3.89936499810164,
+      "r2_std": 7.216220736020827,
+      "mae_mean": 21.95045757206682,
+      "mae_std": 25.303923201873058,
+      "spearman_mean": 0.9355235810095314,
+      "spearman_std": 0.0474129122651712
+    },
+    "MLP": {
+      "r2_mean": 0.17064141035079955,
+      "r2_std": 0.8795409342508785,
+      "mae_mean": 20.191147756576537,
+      "mae_std": 25.45496803006225,
+      "spearman_mean": 0.5721548162157948,
+      "spearman_std": 0.17672016044435776
+    },
+    "CNN": {
+      "r2_mean": -0.39382506608963014,
+      "r2_std": 1.5390645128415996,
+      "mae_mean": 29.01482915878296,
+      "mae_std": 32.772104933026064,
+      "spearman_mean": 0.4068873304927815,
+      "spearman_std": 0.15143436570044627
+    }
+  }
+}

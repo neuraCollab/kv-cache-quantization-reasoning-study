@@ -1,0 +1,154 @@
+{
+  "deepseek-r1-distill-qwen-1.5b__fp8_e4m3": {
+    "n": 80,
+    "fdp_mean": 44.75,
+    "analytical_1feature": {
+      "r2_mean": -10.881763033392625,
+      "mae_mean": 74.52954998583485,
+      "spearman_mean": 0.0926618004855484
+    },
+    "gbm_2feature": {
+      "r2_mean": -86.80908450269803,
+      "mae_mean": 74.76648542000676,
+      "spearman_mean": 0.06700769514474983
+    },
+    "gbm_8feature": {
+      "r2_mean": -111.65794815381143,
+      "mae_mean": 72.85091592910457,
+      "spearman_mean": 0.266990613654119
+    }
+  },
+  "deepseek-r1-distill-qwen-1.5b__fp8_e5m2": {
+    "n": 80,
+    "fdp_mean": 15.925,
+    "analytical_1feature": {
+      "r2_mean": -117.4817885988238,
+      "mae_mean": 25.715806189429554,
+      "spearman_mean": 0.2033718592616624
+    },
+    "gbm_2feature": {
+      "r2_mean": -821.99767291592,
+      "mae_mean": 19.07104226233633,
+      "spearman_mean": 0.40844689114639365
+    },
+    "gbm_8feature": {
+      "r2_mean": -529.494531369955,
+      "mae_mean": 20.769680365355775,
+      "spearman_mean": 0.7007947158056151
+    }
+  },
+  "deepseek-r1-distill-qwen-1.5b__hqq_int2": {
+    "n": 80,
+    "fdp_mean": 1.9125,
+    "analytical_1feature": {
+      "r2_mean": -0.02853424856252591,
+      "mae_mean": 1.0647417038493194,
+      "spearman_mean": -0.02894505699392184
+    },
+    "gbm_2feature": {
+      "r2_mean": -0.16648977676046814,
+      "mae_mean": 1.0669385198950534,
+      "spearman_mean": 0.10221363371792229
+    },
+    "gbm_8feature": {
+      "r2_mean": -0.14426821016143562,
+      "mae_mean": 1.0139746835957426,
+      "spearman_mean": 0.3239258927696262
+    }
+  },
+  "deepseek-r1-distill-qwen-1.5b__hqq_int4": {
+    "n": 80,
+    "fdp_mean": 22.825,
+    "analytical_1feature": {
+      "r2_mean": -161.54943464587168,
+      "mae_mean": 38.87006052239279,
+      "spearman_mean": -0.1013256776074513
+    },
+    "gbm_2feature": {
+      "r2_mean": -1432.6982097476923,
+      "mae_mean": 39.2803389430066,
+      "spearman_mean": -0.06214921185316495
+    },
+    "gbm_8feature": {
+      "r2_mean": -8449.826727437488,
+      "mae_mean": 54.10476268582657,
+      "spearman_mean": -0.029543417815519314
+    }
+  },
+  "deepseek-r1-distill-qwen-7b__fp8_e4m3": {
+    "n": 80,
+    "fdp_mean": 101.8,
+    "analytical_1feature": {
+      "r2_mean": -0.050811558217320016,
+      "mae_mean": 175.2535556772475,
+      "spearman_mean": 0.09958469892131708
+    },
+    "gbm_2feature": {
+      "r2_mean": -0.5426881302006092,
+      "mae_mean": 180.74834823005503,
+      "spearman_mean": 0.17497025412634523
+    },
+    "gbm_8feature": {
+      "r2_mean": -0.7766225259422713,
+      "mae_mean": 193.90210730850532,
+      "spearman_mean": 0.2351266799794375
+    }
+  },
+  "deepseek-r1-distill-qwen-7b__fp8_e5m2": {
+    "n": 80,
+    "fdp_mean": 5.6125,
+    "analytical_1feature": {
+      "r2_mean": -0.053624652619327695,
+      "mae_mean": 2.815099437324994,
+      "spearman_mean": 0.23825714730550035
+    },
+    "gbm_2feature": {
+      "r2_mean": -0.14903600981117854,
+      "mae_mean": 3.15267370482713,
+      "spearman_mean": 0.19298448266721688
+    },
+    "gbm_8feature": {
+      "r2_mean": 0.06265753148909355,
+      "mae_mean": 2.7027253247833576,
+      "spearman_mean": 0.33546703127920874
+    }
+  },
+  "qwen3-1.7b__fp8_e4m3": {
+    "n": 80,
+    "fdp_mean": 610.6625,
+    "analytical_1feature": {
+      "r2_mean": -0.03368639937499189,
+      "mae_mean": 306.35957875734755,
+      "spearman_mean": 0.07441674424713991
+    },
+    "gbm_2feature": {
+      "r2_mean": -0.28790945832712755,
+      "mae_mean": 363.470844278383,
+      "spearman_mean": -0.19610820863216033
+    },
+    "gbm_8feature": {
+      "r2_mean": -0.40588866774187105,
+      "mae_mean": 377.9515068697113,
+      "spearman_mean": -0.22408721893165615
+    }
+  },
+  "qwen3-1.7b__fp8_e5m2": {
+    "n": 80,
+    "fdp_mean": 438.45,
+    "analytical_1feature": {
+      "r2_mean": -0.1842852619701088,
+      "mae_mean": 376.38812679620486,
+      "spearman_mean": 0.09715340524555713
+    },
+    "gbm_2feature": {
+      "r2_mean": -0.26610460029651867,
+      "mae_mean": 381.6419895579184,
+      "spearman_mean": 0.09494415285061931
+    },
+    "gbm_8feature": {
+      "r2_mean": -0.39350333230074097,
+      "mae_mean": 391.630052967577,
+      "spearman_mean": -0.07506384751672497
+    }
+  }
+}

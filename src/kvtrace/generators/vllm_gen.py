@@ -14,7 +14,7 @@ except Exception:
 try:
     from transformers import AutoTokenizer  # type: ignore
 except Exception:
-    AutoTokenizer = None  # type: ignore[assignment]
+    AutoTokenizer = None  # type: ignore[assignment, misc]
 
 from kvtrace.config import ModelCfg, QuantCfg
 from kvtrace.dataset_loader import MathProblem

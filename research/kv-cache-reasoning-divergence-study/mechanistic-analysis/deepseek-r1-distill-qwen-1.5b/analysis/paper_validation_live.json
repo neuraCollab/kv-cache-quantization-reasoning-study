@@ -1,0 +1,64 @@
+{
+  "n_problems": 10,
+  "n_layers": 28,
+  "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+  "fresh_indices": [
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "per_quant": {
+    "fp8_e4m3": {
+      "layer_rel_err_mean": 0.02675999232700893,
+      "layer_rel_err_median": 0.0267333984375,
+      "layer_rel_err_max": 0.029052734375,
+      "top1_ch_noise_frac_mean": 0.12806168976493326,
+      "top1_ch_noise_frac_median": 0.07508971140190708,
+      "top1_ch_noise_frac_max": 0.6804979253112033,
+      "top10_ch_noise_frac_mean": 0.4180727576289815,
+      "top10_ch_noise_frac_median": 0.3698018325742789,
+      "top10_ch_noise_frac_max": 0.9336099585062241,
+      "defended_rel_err_mean": 0.020508575439453124,
+      "defended_rel_err_median": 0.021728515625,
+      "defended_rel_err_max": 0.0250244140625,
+      "defense_change_pct": -23.361056352943102
+    },
+    "fp8_e5m2": {
+      "layer_rel_err_mean": 0.052813720703125,
+      "layer_rel_err_median": 0.052734375,
+      "layer_rel_err_max": 0.0595703125,
+      "top1_ch_noise_frac_mean": 0.14499057428098902,
+      "top1_ch_noise_frac_median": 0.0769180421172453,
+      "top1_ch_noise_frac_max": 0.7551020408163265,
+      "top10_ch_noise_frac_mean": 0.4223244476266387,
+      "top10_ch_noise_frac_median": 0.36954689146469966,
+      "top10_ch_noise_frac_max": 0.9387755102040817,
+      "defended_rel_err_mean": 0.04070674351283482,
+      "defended_rel_err_median": 0.04296875,
+      "defended_rel_err_max": 0.050048828125,
+      "defense_change_pct": -22.923923990028232
+    },
+    "hqq_int4": {
+      "layer_rel_err_mean": 0.11705845424107143,
+      "layer_rel_err_median": 0.11865234375,
+      "layer_rel_err_max": 0.1552734375,
+      "top1_ch_noise_frac_mean": 0.012194940130212105,
+      "top1_ch_noise_frac_median": 0.008531057467855502,
+      "top1_ch_noise_frac_max": 0.12734375,
+      "top10_ch_noise_frac_mean": 0.1013339751345439,
+      "top10_ch_noise_frac_median": 0.07590029694270217,
+      "top10_ch_noise_frac_max": 0.50625,
+      "defended_rel_err_mean": 0.11467633928571429,
+      "defended_rel_err_median": 0.115966796875,
+      "defended_rel_err_max": 0.150390625,
+      "defense_change_pct": -2.0349789947263375
+    }
+  }
+}
