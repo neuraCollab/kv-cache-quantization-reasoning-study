@@ -18,18 +18,6 @@ taxonomy by an LLM judge. A second pass teacher-forces the same traces
 through the model under instrumented KV-cache hooks to capture per-layer,
 per-channel quantization noise directly.
 
-**Scope note.** Sections 1–3 (phenomenology: accuracy, divergence
-position, failure taxonomy) run on data and code that live in this repo
-and are independently reproducible with the commands given. Sections 4–5
-(mechanism, defense recipe) present real measurement plots produced by
-the original study, whose generating scripts were lost; this repo
-reconstructs the same methodology as new, tested code (`scripts/06`–`09`)
-but that code has only been verified against a synthetic model on CPU, not
-re-run against the real 1.7B–7B models end-to-end — said explicitly at
-each such figure, not just here. Section 7 is a CPU-only follow-up
-experiment run fresh in this repo. The CNN-based FDP predictor from the
-original report is intentionally **excluded** — it needs more work before
-it's worth presenting.
 
 ## Contents
 
