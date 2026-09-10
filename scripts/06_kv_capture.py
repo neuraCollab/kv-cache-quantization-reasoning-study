@@ -20,10 +20,16 @@ Reads:
   outputs/traces/{model}_bf16.jsonl   (needs "token_ids" per record)
 
 Writes (outputs/kv_capture/{model}/{quant}/):
-  per_problem.npz         attention_shift_kl, logit_kl_trajectory,
-                           kv_stats_{baseline,quant}, outlier_channels_*
-                           for each of the first --n_problems problems
-  summary.json             mean attention_shift_kl per layer across problems
+  per_problem.npz         attention_shift_kl [n_problems, n_layers];
+                           logit_kl_trajectory_{i} per problem i;
+                           kv_stats_{baseline,quant}_{mean_abs,std,max_abs}
+                           [n_problems, n_layers]; outlier_channels_{baseline,quant}
+                           [n_problems, n_layers, n_channels]
+  summary.json             attention_shift_kl mean/std per layer, and
+                           top10_channel_fraction_per_layer/_median — the
+                           report §4.2 concentration number (fraction of a
+                           layer's total outlier-channel "mass" carried by
+                           its 10 highest-scoring channels)
 """
 from __future__ import annotations
 
@@ -118,11 +124,44 @@ def main() -> int:
         f"logit_kl_trajectory_{i}": np.array(r["logit_kl_trajectory"])
         for i, r in enumerate(per_problem_results)
     }
+    # kv_stats_baseline/quant: list[dict] per layer -> stacked arrays, one
+    # column per stat (mean_abs, std, max_abs), for easy npz round-tripping.
+    kv_stat_arrays = {}
+    for which in ("kv_stats_baseline", "kv_stats_quant"):
+        for stat_name in ("mean_abs", "std", "max_abs"):
+            kv_stat_arrays[f"{which}_{stat_name}"] = np.array(
+                [[layer[stat_name] for layer in r[which]] for r in per_problem_results]
+            )  # [n_problems, n_layers]
+    # outlier_channels_{baseline,quant}: list[Tensor[channels]] per layer,
+    # per problem -> stacked into [n_problems, n_layers, n_channels].
+    outlier_arrays = {
+        which: np.array([[layer.numpy() for layer in r[which]] for r in per_problem_results])
+        for which in ("outlier_channels_baseline", "outlier_channels_quant")
+    }
     np.savez(
         out_dir / "per_problem.npz",
         attention_shift_kl=shift_matrix,
         **trajectory_arrays,  # type: ignore[arg-type]  # numpy stubs don't model **kwargs here
+        **kv_stat_arrays,  # type: ignore[arg-type]
+        **outlier_arrays,  # type: ignore[arg-type]
     )
+
+    # top10_fraction: cumulative fraction of total outlier-channel "mass"
+    # carried by the 10 highest-scoring channels per layer, averaged across
+    # problems — report §4.2's headline concentration number (there: 10/1024
+    # channels carry 51.7% of K-quantization noise on Qwen3-1.7B/fp8_e4m3).
+    # `outlier_channel_scores` already reduced K to one score per channel
+    # (shape [channels]), so top-10 selection here is a plain top-k.
+    top10_fraction_per_layer = []
+    for layer_idx in range(n_layers):
+        fracs = []
+        for r in per_problem_results:
+            scores = r["outlier_channels_baseline"][layer_idx]
+            total = float(scores.sum())
+            if total > 0:
+                top10_sum = float(scores.topk(min(10, scores.numel())).values.sum())
+                fracs.append(top10_sum / total)
+        top10_fraction_per_layer.append(sum(fracs) / len(fracs) if fracs else float("nan"))
 
     summary = {
         "model": args.model,
@@ -131,6 +170,8 @@ def main() -> int:
         "n_layers": n_layers,
         "attention_shift_kl_mean_per_layer": shift_matrix.mean(axis=0).tolist(),
         "attention_shift_kl_std_per_layer": shift_matrix.std(axis=0).tolist(),
+        "top10_channel_fraction_per_layer": top10_fraction_per_layer,
+        "top10_channel_fraction_median": float(np.median(top10_fraction_per_layer)),
     }
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
